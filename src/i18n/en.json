@@ -1,0 +1,31 @@
+{
+  "appTitle": "SmartRecruit",
+  "nav": {
+    "dashboard": "Dashboard",
+    "jobs": "Jobs",
+    "candidates": "Candidates",
+    "settings": "Settings"
+  },
+  "actions": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "jobs": {
+    "title": "Job Title",
+    "location": "Location",
+    "description": "Description",
+    "noData": "No jobs found"
+  },
+  "candidates": {
+    "name": "Name",
+    "email": "Email",
+    "noData": "No candidates found"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "error": "An error occurred"
+  }
+}

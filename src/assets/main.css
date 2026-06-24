@@ -1,23 +1,45 @@
 @import './base.css';
+/*
+  Acest fișier conține stilurile globale ale aplicației.
+
+  Se importă baza de stiluri din base.css, care probabil definește variabilele de temă și resetările inițiale.
+
+  Stilurile pentru body folosesc variabile CSS pentru a susține teme (ex: light/dark mode), controlând culorile generale ale aplicației.
+
+  #app reprezintă containerul principal al aplicației, responsabil cu centrare, spațiere și layout-ul de bază.
+
+  Link-urile (a și .green) sunt stilizate cu efecte de tranziție și culori definite prin variabile, pentru un design consistent.
+
+  Media query-urile asigură comportament responsive:
+  - hover activ doar pe dispozitive cu mouse
+  - layout adaptat pentru ecrane mari (desktop), cu structură pe două coloane
+*/
+
+/* Se folosesc variabilele de tema */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
 
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
+  color: var(--text);
 }
 
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: var(--link, hsla(160, 100%, 37%, 1));
   transition: 0.4s;
   padding: 3px;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    background-color: var(--link-hover, hsla(160, 100%, 37%, 0.2));
   }
 }
 

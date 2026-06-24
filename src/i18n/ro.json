@@ -1,0 +1,31 @@
+{
+  "appTitle": "SmartRecruit",
+  "nav": {
+    "dashboard": "Tablou de bord",
+    "jobs": "Posturi",
+    "candidates": "Candidați",
+    "settings": "Setări"
+  },
+  "actions": {
+    "create": "Creează",
+    "edit": "Editează",
+    "delete": "Șterge",
+    "save": "Salvează",
+    "cancel": "Anulează"
+  },
+  "jobs": {
+    "title": "Denumire Post",
+    "location": "Locație",
+    "description": "Descriere",
+    "noData": "Nu s-au găsit posturi"
+  },
+  "candidates": {
+    "name": "Nume",
+    "email": "Email",
+    "noData": "Nu s-au găsit candidați"
+  },
+  "messages": {
+    "loading": "Se încarcă...",
+    "error": "A apărut o eroare"
+  }
+}

@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import ComponentHomePage from '../components/ComponentHomePage.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <ComponentHomePage>
+      <template #sidebar> Sidebar navigatie. </template>
+      Hello world.
+    </ComponentHomePage>
   </main>
 </template>

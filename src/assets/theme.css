@@ -1,0 +1,23 @@
+/*Tranzitii line intre moduri*/
+* {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Modul normal White*/
+:root {
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --muted: #666;
+  --card-bg: #f5f5f5;
+}
+
+/*Dark mode*/
+.dark {
+  --bg: #121212;
+  --text: #f1f1f1;
+  --muted: #b0b0b0;
+  --card-bg: #1e1e1e;
+}

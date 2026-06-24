@@ -1,71 +1,26 @@
-/* color palette from <https://github.com/vuejs/theme> */
-:root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+/*
+  BASE.CSS
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  Acest fișier definește stilurile de bază ale aplicației.
+  NU conține culori sau teme – acestea vin din theme.css.
+*/
 
-  --vt-c-indigo: #2c3e50;
-
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
-}
-
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
-
+/* Reset general pentru toate elementele */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
+  box-sizing: border-box; /* face calculul dimensiunilor mai predictibil */
+  margin: 0; /* elimină marginile implicite ale browserului */
+  font-weight: normal; /* resetează grosimea fontului */
 }
 
+/* Stiluri globale pentru body (pagina principală) */
 body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
+  min-height: 100vh; /* ocupă întreaga înălțime a ecranului */
+
+  background: var(--bg); /* culoare de fundal din theme.css */
+  color: var(--text); /* culoarea textului din theme.css */
+
   font-family:
     Inter,
     -apple-system,
@@ -79,8 +34,65 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+
+  font-size: 15px; /* dimensiunea de bază a textului */
+  line-height: 1.6; /* spațiere între rânduri pentru lizibilitate */
+
+  /* îmbunătățește claritatea textului pe ecrane */
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* tranziție lină când se schimbă tema (dark/light) */
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Containerul principal al aplicației */
+#app {
+  max-width: 1280px; /* limitează lățimea pe ecrane mari */
+  margin: 0 auto; /* centrează containerul pe orizontală */
+  padding: 2rem; /* spațiu interior pentru aerisire */
+
+  color: var(--text); /* asigură culoarea textului din temă */
+}
+
+/* Stil pentru linkuri și elemente cu clasa green */
+a,
+.green {
+  text-decoration: none; /* elimină sublinierea implicită */
+  color: var(--link); /* culoarea linkului din theme.css */
+
+  transition: 0.3s; /* animație lină la hover */
+  padding: 3px; /* spațiu mic pentru efect vizual */
+}
+
+/* Efect de hover pentru linkuri */
+a:hover {
+  background-color: var(--link-hover); /* fundal subtil la hover */
+}
+
+/* Hover activ doar pe dispozitive cu mouse */
+@media (hover: hover) {
+  a:hover {
+    background-color: var(--link-hover);
+  }
+}
+
+/* Layout pentru ecrane mari (desktop) */
+@media (min-width: 1024px) {
+  body {
+    display: flex; /* activează layout flex */
+    place-items: center; /* centrează conținutul vertical și orizontal */
+  }
+
+  #app {
+    display: grid; /* trece la grid layout */
+
+    /* împarte conținutul în două coloane egale */
+    grid-template-columns: 1fr 1fr;
+
+    padding: 0 2rem; /* reduce padding-ul pe desktop */
+  }
 }
