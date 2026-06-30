@@ -79,11 +79,11 @@ a:hover {
   }
 
   #app {
-    display: grid; /* trece la grid layout */
+    display: grid;
 
     /* împarte conținutul în două coloane egale */
-    grid-template-columns: 1fr 1fr;
+    /*grid-template-columns: 1fr 1fr;*/
 
-    padding: 0 2rem; /* reduce padding-ul pe desktop */
+    padding: 0 0rem; /* reduce padding-ul pe desktop */
   }
 }

@@ -15,12 +15,6 @@
   - layout adaptat pentru ecrane mari (desktop), cu structură pe două coloane
 */
 
-/* Se folosesc variabilele de tema */
-body {
-  background: var(--bg);
-  color: var(--text);
-}
-
 a,
 .green {
   text-decoration: none;
@@ -29,12 +23,14 @@ a,
   padding: 3px;
 }
 
+/*cand dispozitivul suporta hover (mouse sau trackpad)*/
 @media (hover: hover) {
   a:hover {
     background-color: var(--link-hover, hsla(160, 100%, 37%, 0.2));
   }
 }
 
+/*Aplicat doar cand fereastra Chrome are mai mult de 1024px.*/
 @media (min-width: 1024px) {
   body {
     display: flex;
@@ -42,8 +38,9 @@ a,
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    /*display:block*/
+    display: flex;
+    /*grid-template-columns: 1fr 1fr;*/
+    /*padding: 0 2rem;*/
   }
 }

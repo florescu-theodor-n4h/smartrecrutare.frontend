@@ -23,7 +23,7 @@
 }
 
 #main_spa_div {
-  max-width: 1280px;
+  /*max-width: 1280px;*/
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
@@ -33,9 +33,19 @@
 /* Containerul principal al aplicației */
 /*se seteaza culoarea */
 #main_spa_div {
-  max-width: 1280px; /* limitează lățimea pe ecrane mari */
-  margin: 0 auto; /* centrează containerul pe orizontală */
-  padding: 2rem; /* spațiu interior pentru aerisire */
+  /* limitează lățimea pe ecrane mari */
+  /*max-width: 1280px;
+  /* centrează containerul pe orizontală */
+  margin: 0 auto;
+  /* spațiu interior pentru aerisire */
+  padding: 2rem;
+  min-width: 100vw;
 
   color: var(--text); /* asigură culoarea textului din temă */
+  /*}/*/
+
+  /* Se folosesc variabilele de tema */
+  /*body {**/
+  background: var(--bg);
+  color: var(--text);
 }
