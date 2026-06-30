@@ -1,0 +1,26 @@
+{
+  "hero": {
+    "title": "SmartRecruit – A Classic Recruitment Experience",
+    "label": "Recruitment with Purpose",
+    "subtitle": "Bridging Romanian talent and vision with confidence and care.",
+    "description": "SmartRecruit brings together deep industry insight, personalized search and a timeless sense of trust. We help ambitious companies discover the ideal candidates and support professionals in finding meaningful work in Romania’s growing market.",
+    "sidebarTitle": "Your next chapter starts here",
+    "sidebarText": "From senior leadership to specialist teams, our approach balances resilience and refinement, always keeping people at the center.",
+    "cta": "Learn more"
+  },
+  "sections": {
+    "about": {
+      "title": "Cine suntem",
+      "text": "SmartRecruit este o companie românească de recrutare care îmbină tradiția profesională cu o abordare modernă. Ne dedicăm înțelegerii valorilor companiilor și nevoilor candidaților pentru a construi parteneriate durabile și pentru a selecta oameni care contribuie cu adevărat la o cultură solidă."
+    },
+    "services": {
+      "title": "Ce oferim",
+      "text": "Oferim servicii de recrutare executive, selecție de talente și consultanță pentru dezvoltarea echipelor. Fiecare colaborare pornește de la o conversație atentă, continuă cu evaluări riguroase și se încheie cu o plasare responsabilă, adaptată la ritmul și misiunea afacerii tale."
+    },
+    "vision": {
+      "title": "Viziunea noastră",
+      "text": "Credem că orice companie românească merită să construiască un viitor profesional bazat pe integritate, performanță și respect reciproc. Ne străduim să facem din fiecare selecție o experiență demnă, transparentă și inspirată de calitatea oamenilor pe care îi reunim."
+    }
+  },
+  "scrollDown": "Derulează în jos"
+}
