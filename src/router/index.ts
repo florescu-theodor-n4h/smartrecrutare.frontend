@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authGuard } from '@auth0/auth0-vue'
 import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
@@ -13,6 +14,7 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue'),
+      beforeEnter: authGuard,
     },
     {
       path: '/jobs',

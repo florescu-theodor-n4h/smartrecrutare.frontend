@@ -15,7 +15,7 @@
 }
 
 /* Stiluri globale pentru body (pagina principală) */
-body {
+#main_spa_div {
   min-height: 100vh; /* ocupă întreaga înălțime a ecranului */
 
   background: var(--bg); /* culoare de fundal din theme.css */
@@ -47,15 +47,6 @@ body {
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
-}
-
-/* Containerul principal al aplicației */
-#app {
-  max-width: 1280px; /* limitează lățimea pe ecrane mari */
-  margin: 0 auto; /* centrează containerul pe orizontală */
-  padding: 2rem; /* spațiu interior pentru aerisire */
-
-  color: var(--text); /* asigură culoarea textului din temă */
 }
 
 /* Stil pentru linkuri și elemente cu clasa green */

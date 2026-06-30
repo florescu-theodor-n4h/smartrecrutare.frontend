@@ -7,7 +7,7 @@
 }
 
 /* Modul normal White*/
-:root {
+#main_spa_div {
   --bg: #ffffff;
   --text: #1a1a1a;
   --muted: #666;
@@ -15,9 +15,27 @@
 }
 
 /*Dark mode*/
-.dark {
+#main_spa_div.dark {
   --bg: #121212;
   --text: #f1f1f1;
   --muted: #b0b0b0;
   --card-bg: #1e1e1e;
+}
+
+#main_spa_div {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+  color: var(--text);
+}
+
+/* Containerul principal al aplicației */
+/*se seteaza culoarea */
+#main_spa_div {
+  max-width: 1280px; /* limitează lățimea pe ecrane mari */
+  margin: 0 auto; /* centrează containerul pe orizontală */
+  padding: 2rem; /* spațiu interior pentru aerisire */
+
+  color: var(--text); /* asigură culoarea textului din temă */
 }

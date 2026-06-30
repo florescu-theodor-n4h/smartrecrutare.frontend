@@ -23,7 +23,8 @@ export interface Candidate {
 /**
  * Adresa implicită a backend-ului.
  */
-const DEFAULT_HOST = 'http://192.168.2.1:8080'
+//const DEFAULT_HOST = 'http://192.168.2.1:8080/web/'
+const DEFAULT_HOST = 'http://192.168.2.1:8080/web/'
 
 /**
  * Poate fi suprascrisă din fișierul .env

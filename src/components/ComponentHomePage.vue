@@ -65,7 +65,7 @@ onMounted(doOnMounted)
     </header>
 
     <div class="card-content">
-      <aside v-if="$slots.sidebar" class="card-sidebar">
+      <aside v-if="$slots.sidebar" class="card-right-sidebar">
         <slot name="sidebar" />
       </aside>
 
@@ -82,19 +82,73 @@ onMounted(doOnMounted)
   margin-top: 2rem;
   display: flex;
   position: relative;
+  flex-direction: column;
+  gap: 1.5rem;
 }
-.page-header,
-.card-content {
+
+.page-header {
   background: var(--card-bg);
   color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+}
+
+.page-header .card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-header img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.2;
 }
 
 .page-header figcaption em {
   color: var(--muted);
+  font-style: normal;
+}
+
+.card-content {
+  background: var(--card-bg);
+  color: var(--text);
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  align-items: flex-start;
 }
 
 .card-main {
+  flex: 1;
+  min-width: 0;
   color: var(--text);
+}
+
+.card-right-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .card-content {
+    flex-direction: column;
+  }
+
+  .card-right-sidebar {
+    width: 100%;
+  }
 }
 
 body {

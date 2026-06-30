@@ -10,15 +10,15 @@
       <table class="table">
         <thead>
           <tr>
-            <th>{{ $t('candidates.name') }}</th>
-            <th>{{ $t('candidates.email') }}</th>
+            <th>{{ $t('candidates.numePrenume') }}</th>
+            <th>{{ $t('candidates.mail') }}</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="c in candidates" :key="c.id">
-            <td>{{ c.name }}</td>
-            <td>{{ c.email }}</td>
+            <td>{{ c.numePrenume }}</td>
+            <td>{{ c.mail }}</td>
             <td>
               <button @click="edit(c)" class="btn-small">{{ $t('actions.edit') }}</button>
               <button @click="remove(c)" class="btn-small danger">
@@ -36,12 +36,12 @@
         <h3>
           {{ editing.id ? $t('actions.edit') : $t('actions.create') }} {{ $t('nav.candidates') }}
         </h3>
-        <label>{{ $t('candidates.name') }}</label>
-        <input v-model="editing.name" />
-        <label>{{ $t('candidates.email') }}</label>
-        <input v-model="editing.email" />
+        <label>{{ $t('candidates.numePrenume') }}</label>
+        <input v-model="editing.numePrenume" />
+        <label>{{ $t('candidates.mail') }}</label>
+        <input v-model="editing.mail" />
         <label>Phone</label>
-        <input v-model="editing.phone" />
+        <input v-model="editing.tel" />
         <div class="modal-actions">
           <button @click="save" class="btn">{{ $t('actions.save') }}</button>
           <button @click="close" class="btn-ghost">{{ $t('actions.cancel') }}</button>
@@ -74,7 +74,7 @@ async function load() {
 }
 
 function openCreate() {
-  editing.value = { name: '', email: '', phone: '' } as Partial<Candidate>
+  editing.value = { name: '', mail: '', tel: '' } as Partial<Candidate>
   modalOpen.value = true
 }
 
@@ -106,7 +106,7 @@ async function remove(item: Candidate) {
   if (!confirm('Delete candidate?')) return
   if (!item.id) return
   try {
-    await api.deleteCandidate(item.id)
+    await api.deleteCandidate(item.numePrenume)
     await load()
   } catch (e) {
     console.error(e)

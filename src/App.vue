@@ -1,10 +1,14 @@
 <script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ref } from 'vue'
+import { useThemeStore } from '@/stores/theme.store'
+const themeStore = useThemeStore()
+import NavBar from './components/NavBar.vue'
 </script>
 
-<template>
+<template id="wrapper">
   <!--
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
@@ -19,7 +23,27 @@ import { RouterLink, RouterView } from 'vue-router'
     </div>
   </header>
 -->
-  <RouterView />
+
+  <div id="main_spa_div" :class="{ dark: themeStore.dark }">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="left">{{ $t('appTitle') }}</div>
+
+      <div class="right">
+        <button @click="themeStore.toggle()">
+          {{ themeStore.dark ? 'Light Mode' : 'Dark Mode' }}
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- CONTENT -->
+      <main class="content">
+        <NavBar></NavBar>
+        <RouterView />
+      </main>
+    </div>
+  </div>
 </template>
 
 <style scoped>

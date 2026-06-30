@@ -1,43 +1,40 @@
-// services/theme.service.ts
+// stores/theme.store.ts
 
+import { serviciuCookies } from '@/services/cookie.service'
 import { defineStore } from 'pinia'
 
-/**
- * ThemeService
- *
- * Fully self-contained service:
- * - owns Pinia instance
- * - owns store definition
- * - exposes clean OOP API
- */ /*
-export class ThemeStore {
-  // Nu se creaza o instanta pentru fiecare store.
-  // private static pinia = createPinia()
-  /** Variabile interne ale clasei. Acestea sunt statice.
-   * /
-  public static getStoreFunction = defineStore('theme', {
-    state: () => ({
-      dark: false,
-    }),
-  })
-}*/
-
-/**
- * O instanta a Serviciul de Teme.
- * Controleaza starea Dark mode a aplicatiei.
- */
-export const themeStoreFactory = defineStore('theme', {
+export const useThemeStore = defineStore('theme', {
   state: () => ({
     dark: false,
   }),
 
   actions: {
-    toggle() {
-      this.dark = !this.dark
+    /**
+     * Citeste preferinta salvata din cookie.
+     * Se apeleaza o singura data la pornirea aplicatiei.
+     */
+    init() {
+      const saved = serviciuCookies.get('dark')
+
+      if (saved != null) {
+        this.dark = saved === 'true'
+      }
     },
 
+    /**
+     * Comuta tema si persista automat noua valoare.
+     */
+    toggle() {
+      this.dark = !this.dark
+      serviciuCookies.set('dark', String(this.dark))
+    },
+
+    /**
+     * Seteaza explicit tema si persista automat.
+     */
     set(value: boolean) {
       this.dark = value
+      serviciuCookies.set('dark', String(value))
     },
   },
 })
