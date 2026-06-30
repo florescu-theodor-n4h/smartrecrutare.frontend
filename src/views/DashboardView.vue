@@ -2,7 +2,7 @@
   <div class="container">
     <h1>{{ $t('nav.dashboard') }}</h1>
     <div v-if="isLoading">Loading...</div>
-    <div v-else-if="isAuthenticated">
+    <div v-else-if="isAuthenticated && user">
       <h1>Welcome, {{ user.name }}</h1>
       <img :src="user.picture" :alt="user.name" />
       <p>{{ user.email }}</p>

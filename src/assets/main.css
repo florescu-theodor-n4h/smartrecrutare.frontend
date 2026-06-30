@@ -14,14 +14,14 @@
   - hover activ doar pe dispozitive cu mouse
   - layout adaptat pentru ecrane mari (desktop), cu structură pe două coloane
 */
-
+/*
 a,
 .green {
   text-decoration: none;
   color: var(--link, hsla(160, 100%, 37%, 1));
   transition: 0.4s;
   padding: 3px;
-}
+}*/
 
 /*cand dispozitivul suporta hover (mouse sau trackpad)*/
 @media (hover: hover) {

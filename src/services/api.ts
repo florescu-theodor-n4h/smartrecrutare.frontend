@@ -1,30 +1,49 @@
 import axios from 'axios'
 
+export enum TipContract {
+  FullTime = 'Full-time',
+  PartTime = 'Part-time',
+  Contract = 'Contract',
+  Internship = 'Internship',
+}
+
 /**
  * Model pentru un job/post disponibil.
  */
-export interface Job {
-  id?: string | number
-  title: string
-  location: string
-  description?: string
+export class Job {
+  id?: number
+  titlu: string = 'Job default'
+  locatie: string = 'Romania'
+  descriere?: string
+
+  actualizatLa?: string
+  companie: string = 'Companie Default'
+  creatLa: string = 'astazi'
+  salariu /*este optional, coform Job.java*/?: string
+  tipContract: TipContract = TipContract.Contract
+
+  activ: boolean = false
 }
+
+type PostJob = Omit<Job, 'id' | 'createDate'>
 
 /**
  * Model pentru candidat conform Swagger.
  */
-export interface Candidate {
+export class Candidate {
   id?: number
-  numePrenume: string
-  mail: string
-  tel: string
+  numePrenume: string = 'Nume'
+  mail: string = 'E.Mail@example.com'
+  tel: string = '0700000000'
 }
+
+type PostCandidate = Omit<Candidate, 'id'>
 
 /**
  * Adresa implicită a backend-ului.
  */
-//const DEFAULT_HOST = 'http://192.168.2.1:8080/web/'
-const DEFAULT_HOST = 'http://192.168.2.1:8080/web/'
+//const DEFAULT_HOST = 'http://192.168.2.1:8081/web/'
+const DEFAULT_HOST = 'http://localhost:8080'
 
 /**
  * Poate fi suprascrisă din fișierul .env

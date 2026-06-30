@@ -5,7 +5,7 @@ import { RouterView } from 'vue-router'
 import { ref } from 'vue'
 import { useThemeStore } from '@/stores/theme.store'
 const themeStore = useThemeStore()
-import NavBar from './components/NavBar.vue'
+import NavBar from '@/components/NavBar.vue'
 </script>
 
 <template id="wrapper">

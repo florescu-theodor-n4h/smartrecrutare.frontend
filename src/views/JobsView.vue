@@ -10,15 +10,15 @@
       <table class="table">
         <thead>
           <tr>
-            <th>{{ $t('jobs.title') }}</th>
-            <th>{{ $t('jobs.location') }}</th>
+            <th>{{ $t('jobs.titlu') }}</th>
+            <th>{{ $t('jobs.locatie') }}</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="job in jobs" :key="job.id">
-            <td>{{ job.title }}</td>
-            <td>{{ job.location }}</td>
+            <td>{{ job.titlu }}</td>
+            <td>{{ job.locatie }}</td>
             <td>
               <button @click="edit(job)" class="btn-small">{{ $t('actions.edit') }}</button>
               <button @click="remove(job)" class="btn-small danger">
@@ -35,11 +35,11 @@
       <div class="modal-content">
         <h3>{{ editing.id ? $t('actions.edit') : $t('actions.create') }} {{ $t('nav.jobs') }}</h3>
         <label>{{ $t('jobs.title') }}</label>
-        <input v-model="editing.title" />
+        <input v-model="editing.titlu" />
         <label>{{ $t('jobs.location') }}</label>
-        <input v-model="editing.location" />
+        <input v-model="editing.locatie" />
         <label>{{ $t('jobs.description') }}</label>
-        <textarea v-model="editing.description"></textarea>
+        <textarea v-model="editing.descriere"></textarea>
         <div class="modal-actions">
           <button @click="save" class="btn">{{ $t('actions.save') }}</button>
           <button @click="close" class="btn-ghost">{{ $t('actions.cancel') }}</button>
@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import api, { type Job } from '../services/api'
+import api, { Job } from '../services/api'
 import type { Ref } from 'vue'
 
 const jobs = ref<Job[]>([])
@@ -72,7 +72,7 @@ async function load() {
 }
 
 function openCreate() {
-  editing.value = { title: '', location: '', description: '' } as Partial<Job>
+  editing.value = new Job() as Partial<Job>
   modalOpen.value = true
 }
 

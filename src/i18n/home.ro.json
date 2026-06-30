@@ -6,21 +6,21 @@
     "description": "SmartRecruit aduce împreună o profunzime de cunoștințe în industrie, o căutare personalizată și un simț atemporal al încrederii. Sprijinim companiile ambițioase să descopere candidații ideali și profesioniștii să găsească un loc de muncă valoros pe piața românească în continuă dezvoltare.",
     "sidebarTitle": "Următorul tău capitol începe aici",
     "sidebarText": "De la lideri executivi la echipe de specialiști, abordarea noastră echilibrează reziliența și rafinamentul, cu oamenii întotdeauna în centrul atenției.",
-    "cta": "Află mai multe"
+    "cta": "Aflati mai multe"
   },
   "sections": {
     "about": {
-      "title": "Cine suntem",
-      "text": "SmartRecruit este o companie românească de recrutare care îmbină tradiția profesională cu o abordare modernă. Ne dedicăm înțelegerii valorilor companiilor și nevoilor candidaților pentru a construi parteneriate durabile și pentru a selecta oameni care contribuie cu adevărat la o cultură solidă."
+    "title": "Cine suntem",
+    "text": "SmartRecruit este o structură românească specializată în procese integrate de recrutare, selecție și aliniere strategică a capitalului uman, dezvoltată pentru a răspunde nevoilor complexe ale organizațiilor moderne aflate în proces de expansiune sau consolidare. Activitatea noastră combină expertiza acumulată în domeniul resurselor umane cu instrumente contemporane de analiză, evaluare comportamentală și mapare a competențelor, permițând o înțelegere profundă a atât a profilului profesional, cât și a potențialului de dezvoltare al fiecărui candidat. Ne concentrăm pe identificarea compatibilităților reale dintre oameni și organizații, depășind nivelul strict tehnic al selecției și integrând dimensiuni precum cultura organizațională, dinamica echipelor și obiectivele pe termen lung ale angajatorului. Printr-o abordare structurată, consecventă și orientată spre responsabilitate instituțională, construim punți stabile între mediul profesional și mediul de business, contribuind la formarea unor echipe sustenabile, reziliente și capabile să susțină evoluția economică în mod constant și predictibil."
     },
     "services": {
-      "title": "Ce oferim",
-      "text": "Oferim servicii de recrutare executive, selecție de talente și consultanță pentru dezvoltarea echipelor. Fiecare colaborare pornește de la o conversație atentă, continuă cu evaluări riguroase și se încheie cu o plasare responsabilă, adaptată la ritmul și misiunea afacerii tale."
+    "title": "Ce oferim",
+    "text": "Oferim un cadru extins și integrat de servicii dedicate recrutării executive, selecției avansate de talente, evaluării organizaționale și consultanței strategice în dezvoltarea capitalului uman. Procesul nostru este conceput ca un sistem etapizat și riguros, care începe cu o analiză detaliată a structurii organizaționale, a obiectivelor de business și a cerințelor specifice fiecărui rol, continuând cu identificarea și filtrarea candidaților prin metode obiective de evaluare a competențelor, experienței și compatibilității culturale. În etapa de selecție, utilizăm criterii multidimensionale care includ atât performanța profesională anterioară, cât și potențialul de adaptare și creștere în cadrul organizației gazdă. Procesul este completat de validări succesive și de o etapă de integrare asistată, menită să asigure o tranziție fluidă și eficientă a noilor angajați în structurile operaționale existente. Prin acest model, urmărim nu doar ocuparea unor poziții, ci consolidarea unor echipe funcționale, stabile și aliniate la direcțiile strategice ale partenerilor noștri."
     },
     "vision": {
-      "title": "Viziunea noastră",
-      "text": "Credem că orice companie românească merită să construiască un viitor profesional bazat pe integritate, performanță și respect reciproc. Ne străduim să facem din fiecare selecție o experiență demnă, transparentă și inspirată de calitatea oamenilor pe care îi reunim."
+    "title": "Viziunea noastră",
+    "text": "Considerăm că mediul profesional din România se află într-un proces continuu de transformare, în care nevoia de structură, transparență și coerență în recrutare devine esențială pentru dezvoltarea sustenabilă a organizațiilor. Viziunea noastră este orientată către construirea unui ecosistem profesional în care selecția de personal nu este tratată ca un proces tranzacțional, ci ca un mecanism strategic de formare a capacității organizaționale pe termen lung. Ne propunem să contribuim la crearea unui standard unitar de calitate în recrutare, în care deciziile sunt fundamentate pe date, analiză obiectivă și înțelegerea profundă a impactului uman asupra performanței instituționale. În acest cadru, fiecare colaborare devine o oportunitate de a întări structura internă a organizațiilor, de a susține dezvoltarea profesională a indivizilor și de a promova o cultură a responsabilității reciproce, în care progresul economic este direct corelat cu calitatea capitalului uman integrat în sistem."
     }
-  },
+    },
   "scrollDown": "Derulează în jos"
 }
