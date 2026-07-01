@@ -1,75 +1,47 @@
-import { EXCLUDED } from '@/decorators/Exclude'
+import {
+  type Constructor,
+  serialize,
+  transform,
+  toCreatePayload,
+  validate,
+} from '@/decorators/Field'
 
 /**
- * Clasa de baza pentru entitatile care trebuie convertite intr-un DTO
- * (Data Transfer Object), eliminand automat campurile marcate cu `@Exclude`.
+ * Clasa de baza pentru DTO-uri populate prin parse(), folosind metadata
+ * inregistrata de decoratorii din Field.ts, precum @Field, @Size, @Pattern,
+ * @Exclude si altii.
  *
- * Utila in special pentru a evita expunerea campurilor sensibile
- * (parole, token-uri etc.) in raspunsurile trimise catre client.
- *
- * @example
- * ```typescript
- * class UserEntity extends AbstractDtoEntity {
- *   id: number
- *   email: string
- *
- *   @Exclude()
- *   passwordHash: string
- *
- *   constructor(id: number, email: string, passwordHash: string) {
- *     super()
- *     this.id = id
- *     this.email = email
- *     this.passwordHash = passwordHash
- *   }
- * }
- *
- * const dto = new UserEntity(1, 'test@test.com', 'hash').toDTO()
- * // dto = { id: 1, email: 'test@test.com' }
- * ```
+ * Subclasele trebuie sa aiba un constructor fara argumente, deoarece parse()
+ * instantiaza obiectul intern cu new this() inainte de a-i atribui campurile.
  */
-export abstract class AbstractDtoEntity {
-  /**
-   * Returneaza o copie a entitatii curente sub forma de obiect simplu,
-   * fara campurile marcate ca excluse.
-   *
-   * @template T - Forma asteptata a obiectului rezultat.
-   * @returns {T} Obiectul DTO rezultat.
-   */
-  toDTO<T extends Record<string, unknown>>(): T {
-    const excluded = this.getExcludedKeys()
-    const dto: Record<PropertyKey, unknown> = {}
+export abstract class AbstractDTOEntity {
+  static parse<T extends Constructor<AbstractDTOEntity> & (new () => InstanceType<T>)>(
+    this: T,
+    input: Record<string, unknown> | string,
+  ): InstanceType<T> {
+    const raw: Record<string, unknown> = typeof input === 'string' ? JSON.parse(input) : input
 
-    for (const key of Object.keys(this) as Array<keyof this>) {
-      if (!excluded.has(key as PropertyKey)) {
-        dto[key as string] = this[key]
-      }
-    }
+    const instance = new this() as InstanceType<T>
+    Object.assign(instance as object, raw)
 
-    return dto as T
+    // Toate transformarile si validatoarele declarate prin decoratori sunt
+    // executate aici. validate() arunca o singura eroare agregata pentru
+    // toate campurile defecte.
+    validate(instance as object)
+
+    Object.assign(instance as object, transform(instance as object))
+    return instance
   }
 
-  /**
-   * Aduna cheile excluse pentru clasa curenta si pentru toate clasele
-   * parinte, deoarece `@Exclude` inregistreaza cheile pe prototipul
-   * exact unde a fost folosit decoratorul.
-   *
-   * @returns {Set<PropertyKey>} Toate cheile excluse din lantul de mostenire.
-   */
-  private getExcludedKeys(): Set<PropertyKey> {
-    const excluded = new Set<PropertyKey>()
-    let proto = Object.getPrototypeOf(this)
+  toJSON(): Record<string, unknown> {
+    return serialize(this)
+  }
 
-    while (proto && proto !== Object.prototype) {
-      const protoExcluded = EXCLUDED.get(proto)
-      if (protoExcluded) {
-        for (const key of protoExcluded) {
-          excluded.add(key)
-        }
-      }
-      proto = Object.getPrototypeOf(proto)
-    }
+  transform(): Record<string, unknown> {
+    return transform(this)
+  }
 
-    return excluded
+  toCreatePayload(): Record<string, unknown> {
+    return toCreatePayload(this)
   }
 }

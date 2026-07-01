@@ -1,6 +1,10 @@
 const EXCLUDED = new WeakMap<object, Set<PropertyKey>>()
 // type DTO = Record<string, unknown>
 
+/**
+ *
+ * @deprecated Use Fields
+ */
 function Exclude() {
   return function (target: object, key: PropertyKey) {
     let set = EXCLUDED.get(target)

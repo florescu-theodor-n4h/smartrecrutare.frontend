@@ -1,5 +1,7 @@
 import axios from 'axios'
-
+import { Exclude } from '@/decorators/Exclude'
+import { Field } from '@/decorators/Field'
+import { AbstractDTOEntity } from '@/models/AbstractDTOEntity'
 export enum TipContract {
   FullTime = 'Full-time',
   PartTime = 'Part-time',
@@ -10,7 +12,7 @@ export enum TipContract {
 /**
  * Model pentru un job/post disponibil.
  */
-export class Job {
+export class Job extends AbstractDTOEntity {
   id?: number
   titlu: string = 'Job default'
   locatie: string = 'Romania'
@@ -25,8 +27,6 @@ export class Job {
   activ: boolean = false
 }
 
-type PostJob = Omit<Job, 'id' | 'createDate'>
-
 /**
  * Model pentru candidat conform Swagger.
  */
@@ -37,7 +37,7 @@ export class Candidate {
   tel: string = '0700000000'
 }
 
-type PostCandidate = Omit<Candidate, 'id'>
+//type PostCandidate = Omit<Candidate, 'id'>
 
 /**
  * Adresa implicită a backend-ului.
