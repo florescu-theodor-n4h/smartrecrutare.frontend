@@ -1,5 +1,7 @@
 import axios from 'axios'
+// oxlint-disable-next-line no-unused-vars
 import { Exclude } from '@/decorators/Exclude'
+// oxlint-disable-next-line no-unused-vars
 import { Field } from '@/decorators/Field'
 import { AbstractDTOEntity } from '@/models/AbstractDTOEntity'
 export enum TipContract {
@@ -43,12 +45,14 @@ export class Candidate {
  * Adresa implicită a backend-ului.
  */
 //const DEFAULT_HOST = 'http://192.168.2.1:8081/web/'
-const DEFAULT_HOST = 'http://localhost:8080'
+//const DEFAULT_HOST = 'http://localhost:8080'
+//const BACKEND_URL=
+const BACKEND_URL = import.meta.env.VITE_BACKEND
 
 /**
  * Poate fi suprascrisă din fișierul .env
  */
-const API_HOST = (import.meta.env.VITE_API_HOST as string) || DEFAULT_HOST
+const API_HOST = (import.meta.env.VITE_API_HOST as string) || BACKEND_URL
 
 /**
  * Instanța Axios folosită pentru toate apelurile REST.

@@ -1,11 +1,13 @@
-const EXCLUDED = new WeakMap<object, Set<PropertyKey>>()
+import { createFieldDecorator, Exclude } from '@/decorators/Field'
+
+//const EXCLUDED = new WeakMap<object, Set<PropertyKey>>()
 // type DTO = Record<string, unknown>
 
 /**
  *
  * @deprecated Use Fields
  */
-function Exclude() {
+/*function Exclude() {
   return function (target: object, key: PropertyKey) {
     let set = EXCLUDED.get(target)
     if (!set) {
@@ -14,6 +16,10 @@ function Exclude() {
     }
     set.add(key)
   }
+}*/
+
+function OldExcludeField(): (value: unknown, context: ClassFieldDecoratorContext) => void {
+  return createFieldDecorator(() => new Exclude())
 }
 
-export { Exclude, EXCLUDED }
+export { OldExcludeField as OldExclude, OldExcludeField }

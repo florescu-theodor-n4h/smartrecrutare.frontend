@@ -4,6 +4,6 @@ export default {
   clientId: 'mjMWbQgLWxFrLAmMrtfni5CjQhOQRaTK',
   authorizationParams: {
     redirect_uri: window.location.origin,
-    // audience: 'YOUR_API_AUDIENCE',  // uncomment if calling an API
+    audience: 'https://smartrecrutare.app.apiaud', // uncomment if calling an API
   },
 }
