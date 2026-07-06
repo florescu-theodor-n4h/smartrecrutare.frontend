@@ -1,3 +1,4 @@
+import './decorators/symbol-metadata.ts'
 import './assets/theme.css'
 import './assets/main.css'
 

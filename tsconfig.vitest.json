@@ -9,7 +9,7 @@
   "compilerOptions": {
     // Vitest runs in a different environment than the application code.
     // Adjust lib and types accordingly.
-    "lib": [],
+    // AI bot fix> dont do this "lib": [],
     "types": ["node", "jsdom"],
     "target": "ES2022",
     "module": "ESNext",

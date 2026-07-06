@@ -1,10 +1,4 @@
-import {
-  type Constructor,
-  serialize,
-  transform,
-  toCreatePayload,
-  validate,
-} from '@/decorators/Field'
+import { type Constructor, dtoTransformer } from '@/decorators/Field'
 
 /**
  * Clasa de baza pentru DTO-uri populate prin parse(), folosind metadata
@@ -25,23 +19,23 @@ export abstract class AbstractDTOEntity {
     Object.assign(instance as object, raw)
 
     // Toate transformarile si validatoarele declarate prin decoratori sunt
-    // executate aici. validate() arunca o singura eroare agregata pentru
+    // executate aici. dtoTransformer.validate() arunca o singura eroare agregata pentru
     // toate campurile defecte.
-    validate(instance as object)
+    dtoTransformer.validate(instance as object)
 
-    Object.assign(instance as object, transform(instance as object))
+    Object.assign(instance as object, dtoTransformer.transform(instance as object))
     return instance
   }
 
   toJSON(): Record<string, unknown> {
-    return serialize(this)
+    return dtoTransformer.serialize(this)
   }
 
   transform(): Record<string, unknown> {
-    return transform(this)
+    return dtoTransformer.transform(this)
   }
 
   toCreatePayload(): Record<string, unknown> {
-    return toCreatePayload(this)
+    return dtoTransformer.build(this)
   }
 }

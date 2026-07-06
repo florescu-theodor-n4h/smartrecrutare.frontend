@@ -25,34 +25,45 @@ type ValidatorFn<T = unknown> = (value: T, ctx: ValidationContext) => ValidatorR
 type TransformFn<TIn = unknown, TOut = unknown> = (value: TIn, target: unknown) => TOut
 
 type Constructor<T = object> = new (...args: unknown[]) => T
-type AnnotationConstructor<T extends Annotation = Annotation> = abstract new (...args: any[]) => T
+type AnnotationConstructor<T extends Annotation = Annotation> = abstract new (
+  ...args: TransformFn<unknown, unknown>[]
+) => T
 
 type DtoFieldDecorator = (value: undefined, context: ClassFieldDecoratorContext) => void
 
 type ClassCtor = new (...args: unknown[]) => object
 
 type DecoratorMetadataObject = Record<PropertyKey, unknown>
-type SymbolConstructorWithMetadata = { metadata?: symbol }
-
-const SymbolWithMetadata = Symbol as unknown as SymbolConstructorWithMetadata
-SymbolWithMetadata.metadata ??= Symbol('Symbol.metadata')
-
-const SYMBOL_METADATA = SymbolWithMetadata.metadata
 const DTO_FIELD_ANNOTATIONS = Symbol('dto.fieldAnnotations')
+
+function getMetadataSymbol(): symbol {
+  return typeof Symbol.metadata === 'symbol' ? Symbol.metadata : Symbol.for('Symbol.metadata')
+}
 
 function cloneFieldMap(source: Map<string, FieldAnnotations>): Map<string, FieldAnnotations> {
   return new Map(Array.from(source.entries(), ([key, value]) => [key, value.clone()]))
 }
 
 function getClassMetadata(ctor: ClassCtor): DecoratorMetadataObject | undefined {
-  return (ctor as unknown as Record<PropertyKey, unknown>)[SYMBOL_METADATA] as
-    | DecoratorMetadataObject
-    | undefined
+  const current = (ctor as unknown as Record<PropertyKey, unknown>)[getMetadataSymbol()]
+  if (current) {
+    return current as DecoratorMetadataObject
+  }
+
+  // Some implementations may write to the fallback symbol directly.
+  const fallback = (ctor as unknown as Record<PropertyKey, unknown>)[Symbol.for('Symbol.metadata')]
+  return fallback as DecoratorMetadataObject | undefined
 }
 
-function getFieldMapFromMetadata(metadata: DecoratorMetadataObject | undefined): Map<string, FieldAnnotations> | undefined {
+/** Returnează metadata internă asociată unei clase (fără a o crea). */
+
+function getFieldMapFromMetadata(
+  metadata: DecoratorMetadataObject | undefined,
+): Map<string, FieldAnnotations> | undefined {
   return metadata?.[DTO_FIELD_ANNOTATIONS] as Map<string, FieldAnnotations> | undefined
 }
+
+/** Extrage harta de câmpuri din metadata clasei, dacă există. */
 
 function getOwnOrCreateFieldMap(metadata: DecoratorMetadataObject): Map<string, FieldAnnotations> {
   const hasOwnFieldMap = Object.prototype.hasOwnProperty.call(metadata, DTO_FIELD_ANNOTATIONS)
@@ -68,6 +79,8 @@ function getOwnOrCreateFieldMap(metadata: DecoratorMetadataObject): Map<string, 
 
   return metadata[DTO_FIELD_ANNOTATIONS] as Map<string, FieldAnnotations>
 }
+
+/** Returnează sau inițializează harta de anotări pentru o clasă. */
 
 /**
  * Clasa de baza pentru toate anotatiile de camp.
@@ -91,7 +104,7 @@ class FieldDefinition extends Annotation {}
 /**
  * Marcheaza un camp care trebuie eliminat din payload-ul de iesire.
  */
-class Exclude extends Annotation {}
+class ExcludeAnnotation extends Annotation {}
 
 /**
  * Marcheaza un camp generat de motorul bazei de date sau de sistem.
@@ -294,10 +307,12 @@ class FieldAnnotations {
     return this
   }
 
+  /** Verifică dacă există o anotare de tipul dat. */
   has(type: AnnotationConstructor): boolean {
     return this.byClass.has(type)
   }
 
+  /** Returnează o anotare de un anumit tip, dacă există. */
   get<T extends Annotation>(type: AnnotationConstructor): T | undefined {
     return this.byClass.get(type) as T | undefined
   }
@@ -310,10 +325,12 @@ class FieldAnnotations {
     return new Set(this.byClass.values())
   }
 
+  /** Clonează obiectul de anotări (folosit pentru moștenire immutabilă). */
   clone(): FieldAnnotations {
     return new FieldAnnotations(this.key, this.toArray())
   }
 
+  /** Iterează peste anotările stocate pentru acest câmp. */
   [Symbol.iterator](): IterableIterator<Annotation> {
     return this.byClass.values()
   }
@@ -338,6 +355,7 @@ class FieldMetadataRegistry implements FieldMetadataSource {
     return parent && parent !== Function.prototype ? parent : undefined
   }
 
+  /** Obține metadatele moștenite de la clasa părinte. */
   private getInheritedFieldMap(target: ClassCtor): Map<string, FieldAnnotations> {
     const parent = this.getParentCtor(target)
     return parent ? this.getFieldMap(parent) : new Map<string, FieldAnnotations>()
@@ -347,6 +365,7 @@ class FieldMetadataRegistry implements FieldMetadataSource {
     return Array.from(this.getFieldMap(ctor).values())
   }
 
+  /** Obține anotările pentru o proprietate specifică a unei clase. */
   getForProperty(ctor: ClassCtor, key: string): FieldAnnotations | undefined {
     return this.getFieldMap(ctor).get(key)
   }
@@ -354,6 +373,8 @@ class FieldMetadataRegistry implements FieldMetadataSource {
   getFieldMap(ctor: ClassCtor): Map<string, FieldAnnotations> {
     const ownOrInheritedMetadata = getClassMetadata(ctor)
     const metadataFieldMap = getFieldMapFromMetadata(ownOrInheritedMetadata)
+
+    /** Dacă avem metadata direct pe clasă, întoarcem o clonă pentru imutabilitate. */
 
     if (metadataFieldMap) {
       return cloneFieldMap(metadataFieldMap)
@@ -380,18 +401,13 @@ class MetadataView {
  * Registru public pentru utilizare in teste sau in aplicatii externe.
  */
 const dtoMetadata = {
+  /** Obține o vedere (slice) a metadatelor DTO pentru o clasă. */
   get(target: Constructor): MetadataView | undefined {
     return new MetadataView(registry.getFieldMap(target as ClassCtor))
   },
 }
 
-/**
- * Construiește un decorator de camp bazat pe Stage 3.
- * Metadata este inregistrata pe clasa prin context.metadata, nu pe fiecare instanta.
- * Accepta fie o singura anotare, fie o lista, astfel incat decoratorii simpli
- * (ExcludeField, Size, ...) si cei compusi (Field) folosesc aceeasi cablare,
- * fara logica duplicata.
- */
+/** Creează un decorator de câmp Stage III și înregistrează anotările pe clasă. */
 function createFieldDecorator(
   annotationFactory: () => Annotation | readonly Annotation[],
 ): DtoFieldDecorator {
@@ -417,14 +433,36 @@ function createFieldDecorator(
       fieldAnnotations.add(annotation)
     }
 
+    // Store the field map on the decorator-provided metadata object.
+    // Stage III semantics: `context.metadata` is the class-level metadata
+    // object (polyfilled via `Symbol.metadata`), so we persist the field map
+    // there under the private `DTO_FIELD_ANNOTATIONS` symbol.
+    ;(context.metadata as DecoratorMetadataObject)[DTO_FIELD_ANNOTATIONS] =
+      context.metadata[DTO_FIELD_ANNOTATIONS] ?? fieldMap
+
     fieldMap.set(context.name, fieldAnnotations)
   }
 }
 /**
  * Decorator pentru campuri marcate ca excluse.
  */
-function ExcludeField(): DtoFieldDecorator {
-  return createFieldDecorator(() => new Exclude())
+// Decorator factory that supports both `@Exclude` and `@Exclude()` usages.
+function Exclude(): DtoFieldDecorator
+function Exclude(value: undefined, context: ClassFieldDecoratorContext): void
+function Exclude(
+  ...maybeContext: [] | [undefined, ClassFieldDecoratorContext]
+): DtoFieldDecorator | void {
+  const factory = () => new ExcludeAnnotation()
+
+  // If used as `@Exclude` (no parens), TS calls the function with
+  // (value, context). Detect that and apply decorator directly.
+  if (maybeContext.length === 2 && typeof maybeContext[1] === 'object') {
+    createFieldDecorator(factory)(maybeContext[0], maybeContext[1])
+    return
+  }
+
+  // Otherwise return a decorator so `@Exclude()` works.
+  return createFieldDecorator(factory)
 }
 
 /**
@@ -444,7 +482,9 @@ function ValidatorField<T = unknown>(fn: ValidatorFn<T>): DtoFieldDecorator {
 /**
  * Decorator pentru transformari inline.
  */
-function TransformField<TIn = unknown, TOut = unknown>(fn: TransformFn<TIn, TOut>): DtoFieldDecorator {
+function TransformField<TIn = unknown, TOut = unknown>(
+  fn: TransformFn<TIn, TOut>,
+): DtoFieldDecorator {
   return createFieldDecorator(() => new Transform(fn as TransformFn<unknown, unknown>))
 }
 
@@ -513,46 +553,35 @@ function resolveCtor(target: Constructor | object): ClassCtor {
   return (typeof target === 'function' ? target : target.constructor) as ClassCtor
 }
 
+/** Rezolvă constructorul dintr-un obiect sau dintr-o funcție. */
+
 function getFieldAnnotations(target: Constructor | object): FieldAnnotations[] {
   return registry.getFor(resolveCtor(target))
 }
 
-function getFieldAnnotationsFor(target: Constructor | object, key: string): FieldAnnotations | undefined {
+/** Returnează lista de anotări de câmp pentru o clasă/instanță. */
+
+function getFieldAnnotationsFor(
+  target: Constructor | object,
+  key: string,
+): FieldAnnotations | undefined {
   return registry.getForProperty(resolveCtor(target), key)
 }
 
-/**
- * Eroare aruncata de AbstractDTOEntity.parse() atunci cand validarea esueaza.
- */
+/** Returnează anotările pentru o proprietate specifică a unei clasă/instanță. */
+
+/** Eroare aruncată când validarea DTO eșuează. */
 class ParseError extends Error {
   constructor(public readonly issues: Record<string, string>) {
     super('DTO validation failed')
   }
 }
 
-/**
- * Ruleaza validatoarele si constrangerile asociate unei instante DTO.
- * Singura responsabilitate: transforma metadata de camp in erori de validare.
- * Depinde de FieldMetadataSource (nu de FieldMetadataRegistry direct), asa
- * ca poate fi testata cu o sursa de metadata falsa.
- *
- *  * Elimina campurile marcate @Exclude atunci cand o instanta este serializata.
- * Singura responsabilitate: produce reprezentarea publica a instantei.
- *
- * Aplica transformarile de camp declarate prin @Transform / @Field({ transform }).
- * Singura responsabilitate: produce o copie transformata a instantei.
- *
- * Ruleaza validatoarele si constrangerile asociate unei instante DTO.
- * Singura responsabilitate: transforma metadata de camp in erori de validare.
- * Depinde de FieldMetadataSource (nu de FieldMetadataRegistry direct), asa
- * ca poate fi testata cu o sursa de metadata falsa.
- *
- * Aplica transformarile de camp declarate prin @Transform / @Field({ transform }).
- * Singura responsabilitate: produce o copie transformata a instantei.
- */
+/** Transformări și validări pentru instanțe DTO (folosește registrul de metadate). */
 class DtoTransformer {
   constructor(private readonly metadata: FieldMetadataSource = registry) {}
 
+  /** Validează o instanță DTO folosind anotările declarate. */
   validate(instance: object): true {
     const ctor = instance.constructor as ClassCtor
     const issues: Record<string, string> = {}
@@ -564,6 +593,19 @@ class DtoTransformer {
 
       const value = (instance as Record<string, unknown>)[fieldAnnotations.key]
       const ctx: ValidationContext = { key: fieldAnnotations.key, target: instance }
+
+      // Dacă există o transformare care poate arunca, rulăm transformarea
+      // în scopul de a captura erorile ca probleme de validare.
+      const transformAnnotation = fieldAnnotations.get(Transform) as Transform | undefined
+      if (transformAnnotation) {
+        try {
+          transformAnnotation.fn(value, instance)
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err)
+          issues[ctx.key] = message || `${ctx.key} transformation failed`
+          continue
+        }
+      }
 
       for (const annotation of fieldAnnotations.toArray()) {
         this.collectIssue(annotation, value, ctx, issues)
@@ -638,7 +680,7 @@ class DtoTransformer {
     const excludedKeys = new Set(
       this.metadata
         .getFor(ctor)
-        .filter((field) => field.has(Exclude))
+        .filter((field) => field.has(ExcludeAnnotation))
         .map((field) => field.key),
     )
 
@@ -657,7 +699,7 @@ class DtoTransformer {
     const fields = this.metadata.getFor(ctor)
     const skippedKeys = new Set(
       fields
-        .filter((field) => field.has(Exclude) || field.has(AutoGenerated))
+        .filter((field) => field.has(ExcludeAnnotation) || field.has(AutoGenerated))
         .map((field) => field.key),
     )
     const transformsByKey = new Map(
@@ -694,7 +736,7 @@ export {
   // Clase annotation
   Annotation,
   FieldDefinition,
-  Exclude,
+  ExcludeAnnotation,
   AutoGenerated,
   Validator,
   Transform,
@@ -708,7 +750,7 @@ export {
   // Public API
   dtoMetadata,
   // Decorators
-  ExcludeField,
+  Exclude,
   AutoGeneratedField,
   ValidatorField,
   TransformField,

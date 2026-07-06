@@ -1,4 +1,5 @@
-import { createFieldDecorator, Exclude } from '@/decorators/Field'
+import { createFieldDecorator, ExcludeAnnotation, Exclude } from '@/decorators/Field'
+import type { DtoFieldDecorator } from '@/decorators/Field'
 
 //const EXCLUDED = new WeakMap<object, Set<PropertyKey>>()
 // type DTO = Record<string, unknown>
@@ -18,8 +19,8 @@ import { createFieldDecorator, Exclude } from '@/decorators/Field'
   }
 }*/
 
-function OldExcludeField(): (value: unknown, context: ClassFieldDecoratorContext) => void {
-  return createFieldDecorator(() => new Exclude())
+function OldExcludeField(): DtoFieldDecorator {
+  return createFieldDecorator(() => new ExcludeAnnotation())
 }
 
-export { OldExcludeField as OldExclude, OldExcludeField }
+export { OldExcludeField as OldExclude, OldExcludeField, Exclude }
