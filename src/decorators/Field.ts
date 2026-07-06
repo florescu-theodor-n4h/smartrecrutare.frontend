@@ -25,11 +25,49 @@ type ValidatorFn<T = unknown> = (value: T, ctx: ValidationContext) => ValidatorR
 type TransformFn<TIn = unknown, TOut = unknown> = (value: TIn, target: unknown) => TOut
 
 type Constructor<T = object> = new (...args: unknown[]) => T
-type AnnotationConstructor<T extends Annotation = Annotation> = abstract new (...args: never[]) => T
+type AnnotationConstructor<T extends Annotation = Annotation> = abstract new (...args: any[]) => T
 
-type FieldDecorator = (value: unknown, context: ClassFieldDecoratorContext) => void
+type DtoFieldDecorator = (value: undefined, context: ClassFieldDecoratorContext) => void
 
 type ClassCtor = new (...args: unknown[]) => object
+
+type DecoratorMetadataObject = Record<PropertyKey, unknown>
+type SymbolConstructorWithMetadata = { metadata?: symbol }
+
+const SymbolWithMetadata = Symbol as unknown as SymbolConstructorWithMetadata
+SymbolWithMetadata.metadata ??= Symbol('Symbol.metadata')
+
+const SYMBOL_METADATA = SymbolWithMetadata.metadata
+const DTO_FIELD_ANNOTATIONS = Symbol('dto.fieldAnnotations')
+
+function cloneFieldMap(source: Map<string, FieldAnnotations>): Map<string, FieldAnnotations> {
+  return new Map(Array.from(source.entries(), ([key, value]) => [key, value.clone()]))
+}
+
+function getClassMetadata(ctor: ClassCtor): DecoratorMetadataObject | undefined {
+  return (ctor as unknown as Record<PropertyKey, unknown>)[SYMBOL_METADATA] as
+    | DecoratorMetadataObject
+    | undefined
+}
+
+function getFieldMapFromMetadata(metadata: DecoratorMetadataObject | undefined): Map<string, FieldAnnotations> | undefined {
+  return metadata?.[DTO_FIELD_ANNOTATIONS] as Map<string, FieldAnnotations> | undefined
+}
+
+function getOwnOrCreateFieldMap(metadata: DecoratorMetadataObject): Map<string, FieldAnnotations> {
+  const hasOwnFieldMap = Object.prototype.hasOwnProperty.call(metadata, DTO_FIELD_ANNOTATIONS)
+
+  if (!hasOwnFieldMap) {
+    const inherited = metadata[DTO_FIELD_ANNOTATIONS] as Map<string, FieldAnnotations> | undefined
+    Object.defineProperty(metadata, DTO_FIELD_ANNOTATIONS, {
+      value: inherited ? cloneFieldMap(inherited) : new Map<string, FieldAnnotations>(),
+      writable: true,
+      configurable: true,
+    })
+  }
+
+  return metadata[DTO_FIELD_ANNOTATIONS] as Map<string, FieldAnnotations>
+}
 
 /**
  * Clasa de baza pentru toate anotatiile de camp.
@@ -295,50 +333,35 @@ interface FieldMetadataSource {
  * Se bazeaza pe un WeakMap de la constructor la harta de campuri.
  */
 class FieldMetadataRegistry implements FieldMetadataSource {
-  private readonly registry = new WeakMap<ClassCtor, Map<string, FieldAnnotations>>()
-
   private getParentCtor(target: ClassCtor): ClassCtor | undefined {
     const parent = Object.getPrototypeOf(target) as ClassCtor | null
     return parent && parent !== Function.prototype ? parent : undefined
   }
 
-  private getOrCreateFieldMap(target: ClassCtor): Map<string, FieldAnnotations> {
-    const existing = this.registry.get(target)
-    if (existing) {
-      return existing
-    }
-
+  private getInheritedFieldMap(target: ClassCtor): Map<string, FieldAnnotations> {
     const parent = this.getParentCtor(target)
-    const inherited = parent ? this.getOrCreateFieldMap(parent) : undefined
-    const next = new Map<string, FieldAnnotations>(
-      inherited ? Array.from(inherited.entries(), ([key, value]) => [key, value.clone()]) : [],
-    )
-
-    this.registry.set(target, next)
-    return next
-  }
-
-  register(instance: object, key: string, annotation: Annotation): void {
-    const ctor = instance.constructor as ClassCtor
-    const fieldMap = this.getOrCreateFieldMap(ctor)
-    const fieldAnnotations = fieldMap.get(key) ?? new FieldAnnotations(key)
-    fieldAnnotations.add(annotation)
-    fieldMap.set(key, fieldAnnotations)
+    return parent ? this.getFieldMap(parent) : new Map<string, FieldAnnotations>()
   }
 
   getFor(ctor: ClassCtor): FieldAnnotations[] {
-    return Array.from(this.getOrCreateFieldMap(ctor).values())
+    return Array.from(this.getFieldMap(ctor).values())
   }
 
   getForProperty(ctor: ClassCtor, key: string): FieldAnnotations | undefined {
-    return this.getOrCreateFieldMap(ctor).get(key)
+    return this.getFieldMap(ctor).get(key)
   }
 
   getFieldMap(ctor: ClassCtor): Map<string, FieldAnnotations> {
-    return this.getOrCreateFieldMap(ctor)
+    const ownOrInheritedMetadata = getClassMetadata(ctor)
+    const metadataFieldMap = getFieldMapFromMetadata(ownOrInheritedMetadata)
+
+    if (metadataFieldMap) {
+      return cloneFieldMap(metadataFieldMap)
+    }
+
+    return this.getInheritedFieldMap(ctor)
   }
 }
-
 const registry = new FieldMetadataRegistry()
 
 class MetadataView {
@@ -364,89 +387,99 @@ const dtoMetadata = {
 
 /**
  * Construiește un decorator de camp bazat pe Stage 3.
- * Metadata este inregistrata la initializarea instanței prin context.addInitializer.
+ * Metadata este inregistrata pe clasa prin context.metadata, nu pe fiecare instanta.
  * Accepta fie o singura anotare, fie o lista, astfel incat decoratorii simpli
  * (ExcludeField, Size, ...) si cei compusi (Field) folosesc aceeasi cablare,
  * fara logica duplicata.
  */
 function createFieldDecorator(
   annotationFactory: () => Annotation | readonly Annotation[],
-): FieldDecorator {
-  return (_value: unknown, context: ClassFieldDecoratorContext) => {
+): DtoFieldDecorator {
+  return (_value: undefined, context: ClassFieldDecoratorContext) => {
     if (context.kind !== 'field') {
       return
     }
 
-    const propertyKey = String(context.name)
+    if (context.private) {
+      throw new Error('DTO field annotations do not support private fields')
+    }
+
+    if (typeof context.name !== 'string') {
+      throw new Error('DTO field annotations require string property names')
+    }
+
+    const fieldMap = getOwnOrCreateFieldMap(context.metadata as DecoratorMetadataObject)
+    const fieldAnnotations = fieldMap.get(context.name) ?? new FieldAnnotations(context.name)
     const produced = annotationFactory()
     const annotations = Array.isArray(produced) ? produced : [produced]
 
     for (const annotation of annotations) {
-      registry.register(context. as object, propertyKey, annotation)
+      fieldAnnotations.add(annotation)
     }
+
+    fieldMap.set(context.name, fieldAnnotations)
   }
 }
-
 /**
  * Decorator pentru campuri marcate ca excluse.
  */
-function ExcludeField(): FieldDecorator {
+function ExcludeField(): DtoFieldDecorator {
   return createFieldDecorator(() => new Exclude())
 }
 
 /**
  * Decorator pentru campuri generate automat.
  */
-function AutoGeneratedField(): FieldDecorator {
+function AutoGeneratedField(): DtoFieldDecorator {
   return createFieldDecorator(() => new AutoGenerated())
 }
 
 /**
  * Decorator pentru validatori inline.
  */
-function ValidatorField<T = unknown>(fn: ValidatorFn<T>): FieldDecorator {
+function ValidatorField<T = unknown>(fn: ValidatorFn<T>): DtoFieldDecorator {
   return createFieldDecorator(() => new Validator(fn as ValidatorFn<unknown>))
 }
 
 /**
  * Decorator pentru transformari inline.
  */
-function TransformField<TIn = unknown, TOut = unknown>(fn: TransformFn<TIn, TOut>): FieldDecorator {
+function TransformField<TIn = unknown, TOut = unknown>(fn: TransformFn<TIn, TOut>): DtoFieldDecorator {
   return createFieldDecorator(() => new Transform(fn as TransformFn<unknown, unknown>))
 }
 
 /**
  * Decorator pentru constrangere de marime.
  */
-function Size(options: { min?: number; max?: number }): FieldDecorator {
+function Size(options: { min?: number; max?: number }): DtoFieldDecorator {
   return createFieldDecorator(() => new SizeConstraint(options))
 }
 
 /**
  * Decorator pentru constrangere de data.
  */
-function DateTime(options: { before?: Date; after?: Date }): FieldDecorator {
+function DateTime(options: { before?: Date; after?: Date }): DtoFieldDecorator {
   return createFieldDecorator(() => new DateTimeConstraint(options))
 }
 
 /**
  * Decorator pentru constrangere de interval numeric.
  */
-function Range(options: { min?: number; max?: number }): FieldDecorator {
+function Range(options: { min?: number; max?: number }): DtoFieldDecorator {
   return createFieldDecorator(() => new RangeConstraint(options))
 }
 
 /**
  * Decorator pentru constrangere bazata pe regex.
  */
-function Pattern(regex: RegExp): FieldDecorator {
+function Pattern(regex: RegExp): DtoFieldDecorator {
   return createFieldDecorator(() => new PatternConstraint(regex))
 }
 
 /**
  * Decorator pentru o lista finita de valori permise.
  */
-function OneOf(values: readonly unknown[]): FieldDecorator {
+function OneOf(values: readonly unknown[]): DtoFieldDecorator {
   return createFieldDecorator(() => new EnumConstraint(values))
 }
 
@@ -458,7 +491,7 @@ function Field(
     transform?: TransformFn<unknown, unknown>
     validators?: ValidatorFn<unknown>[]
   } = {},
-): FieldDecorator {
+): DtoFieldDecorator {
   return createFieldDecorator(() => {
     const annotations: Annotation[] = [new FieldDefinition()]
 
@@ -474,6 +507,18 @@ function Field(
 
     return annotations
   })
+}
+
+function resolveCtor(target: Constructor | object): ClassCtor {
+  return (typeof target === 'function' ? target : target.constructor) as ClassCtor
+}
+
+function getFieldAnnotations(target: Constructor | object): FieldAnnotations[] {
+  return registry.getFor(resolveCtor(target))
+}
+
+function getFieldAnnotationsFor(target: Constructor | object, key: string): FieldAnnotations | undefined {
+  return registry.getForProperty(resolveCtor(target), key)
 }
 
 /**
@@ -645,6 +690,7 @@ export {
   type TransformFn,
   type Constructor,
   type AnnotationConstructor,
+  type DtoFieldDecorator,
   // Clase annotation
   Annotation,
   FieldDefinition,
