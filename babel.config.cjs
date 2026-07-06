@@ -1,31 +1,36 @@
 module.exports = {
   presets: [
     [
-      '@babel/preset-env',
+      require.resolve('@babel/preset-env'),
       {
-        targets: { node: 'current' },
+        targets: 'defaults',
+        modules: false,
       },
     ],
   ],
+
   plugins: [
     [
       require.resolve('@babel/plugin-proposal-decorators'),
-      { version: '2023-05', emitMetadata: true },
+      {
+        version: '2023-05',
+        emitMetadata: true,
+      },
     ],
   ],
+
   overrides: [
     {
-      // This tells Babel: "When looking at Vue files, do not look for JSX"
-      test: /\.vue$/,
+      test: /\.[cm]?tsx?$/,
       presets: [
-        [require.resolve('@babel/preset-typescript'), { allExtensions: false, isTSX: false }],
-      ],
-    },
-    {
-      // This handles your standard TypeScript files
-      test: /\.ts$/,
-      presets: [
-        [require.resolve('@babel/preset-typescript'), { allExtensions: false, isTSX: false }],
+        [
+          require.resolve('@babel/preset-typescript'),
+          {
+            allExtensions: false,
+            isTSX: false,
+            allowDeclareFields: true,
+          },
+        ],
       ],
     },
   ],
