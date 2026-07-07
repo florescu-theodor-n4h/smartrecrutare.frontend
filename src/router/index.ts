@@ -27,6 +27,11 @@ const router = createRouter({
       component: () => import('../views/CandidatesView.vue'),
     },
     {
+      path: '/chatbot',
+      name: 'chatbot',
+      component: () => import('../views/ChatbotView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

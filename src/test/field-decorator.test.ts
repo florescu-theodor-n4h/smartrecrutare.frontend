@@ -1,5 +1,12 @@
 import { expect, test } from 'vitest'
-import { Field, dtoMetadata } from '@/decorators/Field'
+import {
+  Exclude,
+  ExcludeAnnotation,
+  Field,
+  dtoMetadata,
+  getFieldAnnotations,
+  getFieldAnnotationsFor,
+} from '@/decorators/Field'
 
 class Person {
   @Field()
@@ -15,4 +22,49 @@ test('Field decorator registers fields in dtoMetadata', () => {
   // should have both fields
   expect(meta!.has('name')).toBe(true)
   expect(meta!.has('age')).toBe(true)
+})
+
+test('Stage III metadata is per field and class-level across instances', () => {
+  class Stage3FieldScopeDto {
+    @Field()
+    title = ''
+
+    @Exclude
+    @Field()
+    internal = ''
+  }
+
+  const first = new Stage3FieldScopeDto()
+  const second = new Stage3FieldScopeDto()
+
+  first.title = 'first-title'
+  second.title = 'second-title'
+  first.internal = 'first-secret'
+  second.internal = 'second-secret'
+
+  // Metadata should be attached to the class and remain stable for all instances.
+  expect(getFieldAnnotations(first).length).toBe(2)
+  expect(getFieldAnnotations(second).length).toBe(2)
+
+  const titleOnFirst = getFieldAnnotationsFor(first, 'title')
+  const titleOnSecond = getFieldAnnotationsFor(second, 'title')
+  const internalOnFirst = getFieldAnnotationsFor(first, 'internal')
+  const internalOnSecond = getFieldAnnotationsFor(second, 'internal')
+
+  expect(titleOnFirst).toBeDefined()
+  expect(titleOnSecond).toBeDefined()
+  expect(internalOnFirst).toBeDefined()
+  expect(internalOnSecond).toBeDefined()
+
+  // Per-field behavior: only `internal` has Exclude metadata.
+  expect(titleOnFirst?.has(ExcludeAnnotation)).toBe(false)
+  expect(titleOnSecond?.has(ExcludeAnnotation)).toBe(false)
+  expect(internalOnFirst?.has(ExcludeAnnotation)).toBe(true)
+  expect(internalOnSecond?.has(ExcludeAnnotation)).toBe(true)
+
+  // Class metadata view exposes both decorated fields.
+  const meta = dtoMetadata.get(Stage3FieldScopeDto as unknown as any)
+  expect(meta).toBeDefined()
+  expect(meta?.has('title')).toBe(true)
+  expect(meta?.has('internal')).toBe(true)
 })

@@ -1,9 +1,9 @@
-import axios from 'axios'
-// oxlint-disable-next-line no-unused-vars
 import { Exclude } from '@/decorators/Exclude'
-// oxlint-disable-next-line no-unused-vars
 import { Field } from '@/decorators/Field'
 import { AbstractDTOEntity } from '@/models/AbstractDTOEntity'
+import { httpClient } from '@/services/httpClient'
+import type { AxiosInstance, AxiosResponse } from 'axios'
+
 export enum TipContract {
   FullTime = 'Full-time',
   PartTime = 'Part-time',
@@ -15,17 +15,34 @@ export enum TipContract {
  * Model pentru un job/post disponibil.
  */
 export class Job extends AbstractDTOEntity {
+  @Exclude()
   id?: number
+
+  @Field()
   titlu: string = 'Job default'
+
+  @Field()
   locatie: string = 'Romania'
+
+  @Field()
   descriere?: string
 
+  @Field()
   actualizatLa?: string
+
+  @Field()
   companie: string = 'Companie Default'
+
+  @Field()
   creatLa: string = 'astazi'
+
+  @Field()
   salariu /*este optional, coform Job.java*/?: string
+
+  @Field()
   tipContract: TipContract = TipContract.Contract
 
+  @Field()
   activ: boolean = false
 }
 
@@ -33,36 +50,129 @@ export class Job extends AbstractDTOEntity {
  * Model pentru candidat conform Swagger.
  */
 export class Candidate {
+  @Exclude()
   id?: number
+
+  @Field()
   numePrenume: string = 'Nume'
+
+  @Field()
   mail: string = 'E.Mail@example.com'
+
+  @Field()
   tel: string = '0700000000'
 }
 
 //type PostCandidate = Omit<Candidate, 'id'>
 
-/**
- * Adresa implicită a backend-ului.
- */
-//const DEFAULT_HOST = 'http://192.168.2.1:8081/web/'
-//const DEFAULT_HOST = 'http://localhost:8080'
-//const BACKEND_URL=
-const BACKEND_URL = import.meta.env.VITE_BACKEND
+interface IJobsApi {
+  getJobs(): Promise<AxiosResponse<Job[]>>
+  getJob(id: string | number): Promise<AxiosResponse<Job>>
+  createJob(payload: Job): Promise<AxiosResponse<Job>>
+  updateJob(id: string | number, payload: Job): Promise<AxiosResponse<Job>>
+  deleteJob(id: string | number): Promise<AxiosResponse<void>>
+}
 
-/**
- * Poate fi suprascrisă din fișierul .env
- */
-const API_HOST = (import.meta.env.VITE_API_HOST as string) || BACKEND_URL
+interface ICandidatesApi {
+  getCandidates(): Promise<AxiosResponse<Candidate[]>>
+  createCandidate(payload: Candidate): Promise<AxiosResponse<Candidate>>
+  updateCandidate(id: number, payload: Candidate): Promise<AxiosResponse<Candidate>>
+  deleteCandidate(numeCandidat: string): Promise<AxiosResponse<void>>
+}
 
-/**
- * Instanța Axios folosită pentru toate apelurile REST.
- */
-const api = axios.create({
-  baseURL: API_HOST,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+abstract class BaseApiService {
+  constructor(protected readonly api: AxiosInstance) {}
+}
+
+class JobsApiService extends BaseApiService implements IJobsApi {
+  getJobs(): Promise<AxiosResponse<Job[]>> {
+    return this.api.get('/api/jobs')
+  }
+
+  getJob(id: string | number): Promise<AxiosResponse<Job>> {
+    return this.api.get(`/api/jobs/${id}`)
+  }
+
+  createJob(payload: Job): Promise<AxiosResponse<Job>> {
+    return this.api.post('/api/jobs', payload)
+  }
+
+  updateJob(id: string | number, payload: Job): Promise<AxiosResponse<Job>> {
+    return this.api.put(`/api/jobs/${id}`, payload)
+  }
+
+  deleteJob(id: string | number): Promise<AxiosResponse<void>> {
+    return this.api.delete(`/api/jobs/${id}`)
+  }
+}
+
+class CandidatesApiService extends BaseApiService implements ICandidatesApi {
+  getCandidates(): Promise<AxiosResponse<Candidate[]>> {
+    return this.api.get('/api/candidati')
+  }
+
+  createCandidate(payload: Candidate): Promise<AxiosResponse<Candidate>> {
+    return this.api.post('/api/candidati', payload)
+  }
+
+  updateCandidate(id: number, payload: Candidate): Promise<AxiosResponse<Candidate>> {
+    return this.api.put(`/api/candidati/${id}`, payload)
+  }
+
+  deleteCandidate(numeCandidat: string): Promise<AxiosResponse<void>> {
+    return this.api.delete(`/api/candidati/${encodeURIComponent(numeCandidat)}`)
+  }
+}
+
+class ApiFacade implements IJobsApi, ICandidatesApi {
+  constructor(
+    private readonly jobsApi: IJobsApi,
+    private readonly candidatesApi: ICandidatesApi,
+    public readonly axios: AxiosInstance,
+  ) {}
+
+  getJobs(): Promise<AxiosResponse<Job[]>> {
+    return this.jobsApi.getJobs()
+  }
+
+  getJob(id: string | number): Promise<AxiosResponse<Job>> {
+    return this.jobsApi.getJob(id)
+  }
+
+  createJob(payload: Job): Promise<AxiosResponse<Job>> {
+    return this.jobsApi.createJob(payload)
+  }
+
+  updateJob(id: string | number, payload: Job): Promise<AxiosResponse<Job>> {
+    return this.jobsApi.updateJob(id, payload)
+  }
+
+  deleteJob(id: string | number): Promise<AxiosResponse<void>> {
+    return this.jobsApi.deleteJob(id)
+  }
+
+  getCandidates(): Promise<AxiosResponse<Candidate[]>> {
+    return this.candidatesApi.getCandidates()
+  }
+
+  createCandidate(payload: Candidate): Promise<AxiosResponse<Candidate>> {
+    return this.candidatesApi.createCandidate(payload)
+  }
+
+  updateCandidate(id: number, payload: Candidate): Promise<AxiosResponse<Candidate>> {
+    return this.candidatesApi.updateCandidate(id, payload)
+  }
+
+  deleteCandidate(numeCandidat: string): Promise<AxiosResponse<void>> {
+    return this.candidatesApi.deleteCandidate(numeCandidat)
+  }
+}
+
+const apiFacade = new ApiFacade(
+  new JobsApiService(httpClient),
+  new CandidatesApiService(httpClient),
+  httpClient,
+)
 
 export default {
   // =========================
@@ -73,35 +183,35 @@ export default {
    * Obține toate joburile.
    */
   getJobs() {
-    return api.get('/api/jobs')
+    return apiFacade.getJobs()
   },
 
   /**
    * Obține un job după ID.
    */
   getJob(id: string | number) {
-    return api.get(`/api/jobs/${id}`)
+    return apiFacade.getJob(id)
   },
 
   /**
    * Creează un job nou.
    */
   createJob(payload: Job) {
-    return api.post('/api/jobs', payload)
+    return apiFacade.createJob(payload)
   },
 
   /**
    * Actualizează un job existent.
    */
   updateJob(id: string | number, payload: Job) {
-    return api.put(`/api/jobs/${id}`, payload)
+    return apiFacade.updateJob(id, payload)
   },
 
   /**
    * Șterge un job după ID.
    */
   deleteJob(id: string | number) {
-    return api.delete(`/api/jobs/${id}`)
+    return apiFacade.deleteJob(id)
   },
 
   // =========================
@@ -112,21 +222,21 @@ export default {
    * Obține lista tuturor candidaților.
    */
   getCandidates() {
-    return api.get('/api/candidati')
+    return apiFacade.getCandidates()
   },
 
   /**
    * Adaugă un candidat nou.
    */
   createCandidate(payload: Candidate) {
-    return api.post('/api/candidati', payload)
+    return apiFacade.createCandidate(payload)
   },
 
   /**
    * Modifică datele unui candidat.
    */
   updateCandidate(id: number, payload: Candidate) {
-    return api.put(`/api/candidati/${id}`, payload)
+    return apiFacade.updateCandidate(id, payload)
   },
 
   /**
@@ -135,11 +245,11 @@ export default {
    * DELETE /api/candidati/{numeCandidat}
    */
   deleteCandidate(numeCandidat: string) {
-    return api.delete(`/api/candidati/${encodeURIComponent(numeCandidat)}`)
+    return apiFacade.deleteCandidate(numeCandidat)
   },
 
   /**
    * Expune instanța Axios pentru utilizări avansate.
    */
-  axios: api,
+  axios: apiFacade.axios,
 }

@@ -4,7 +4,8 @@
     "dashboard": "Dashboard",
     "jobs": "Jobs",
     "candidates": "Candidates",
-    "settings": "Settings"
+    "settings": "Settings",
+    "chatbot": "Chatbot"
   },
   "actions": {
     "create": "Create",
@@ -27,5 +28,31 @@
   "messages": {
     "loading": "Loading...",
     "error": "An error occurred"
+  },
+  "chatbot": {
+    "title": "GPT Robot",
+    "conversations": "Conversations",
+    "conversation": "Conversation",
+    "newConversation": "New",
+    "noConversationSelected": "Select or create a conversation",
+    "emptyConversations": "No conversations yet",
+    "emptyMessages": "No messages yet",
+    "inputPlaceholder": "Type your message...",
+    "send": "Send",
+    "retry": "Retry",
+    "loadMore": "Load older",
+    "errors": {
+      "loadConversations": "Could not load conversations",
+      "createConversation": "Could not create conversation",
+      "loadMessages": "Could not load messages",
+      "sendMessage": "Could not send message"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "refresh": "Refresh",
+    "markRead": "Mark read",
+    "fallbackMessage": "New notification"
   }
 }

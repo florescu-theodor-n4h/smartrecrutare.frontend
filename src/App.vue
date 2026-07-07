@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ref } from 'vue'
 import { useThemeStore } from '@/stores/theme.store'
 const themeStore = useThemeStore()
 import NavBar from '@/components/NavBar.vue'
+import ApiStatusBar from '@/components/ApiStatusBar.vue'
+import ChatbotAndroidWidget from '@/components/ChatbotAndroidWidget.vue'
 </script>
 
 <template id="wrapper">
@@ -43,6 +42,9 @@ import NavBar from '@/components/NavBar.vue'
         <RouterView />
       </main>
     </div>
+
+    <ChatbotAndroidWidget label="Open chatbot" />
+    <ApiStatusBar />
   </div>
 </template>
 

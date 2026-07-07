@@ -4,7 +4,8 @@
     "dashboard": "Tablou de bord",
     "jobs": "Posturi",
     "candidates": "Candidați",
-    "settings": "Setări"
+    "settings": "Setări",
+    "chatbot": "Chatbot"
   },
   "actions": {
     "create": "Creează",
@@ -27,5 +28,31 @@
   "messages": {
     "loading": "Se încarcă...",
     "error": "A apărut o eroare"
+  },
+  "chatbot": {
+    "title": "Robot GPT",
+    "conversations": "Conversații",
+    "conversation": "Conversație",
+    "newConversation": "Nouă",
+    "noConversationSelected": "Selectează sau creează o conversație",
+    "emptyConversations": "Nu există conversații",
+    "emptyMessages": "Nu există mesaje",
+    "inputPlaceholder": "Scrie mesajul tău...",
+    "send": "Trimite",
+    "retry": "Reîncearcă",
+    "loadMore": "Încarcă mai vechi",
+    "errors": {
+      "loadConversations": "Conversațiile nu au putut fi încărcate",
+      "createConversation": "Conversația nu a putut fi creată",
+      "loadMessages": "Mesajele nu au putut fi încărcate",
+      "sendMessage": "Mesajul nu a putut fi trimis"
+    }
+  },
+  "notifications": {
+    "title": "Notificări",
+    "empty": "Nu există notificări",
+    "refresh": "Reîncarcă",
+    "markRead": "Marchează citită",
+    "fallbackMessage": "Notificare nouă"
   }
 }
