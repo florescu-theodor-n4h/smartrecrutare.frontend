@@ -65,7 +65,7 @@ export class Candidate {
 
 //type PostCandidate = Omit<Candidate, 'id'>
 
-interface IJobsApi {
+export interface IJobsApi {
   getJobs(): Promise<AxiosResponse<Job[]>>
   getJob(id: string | number): Promise<AxiosResponse<Job>>
   createJob(payload: Job): Promise<AxiosResponse<Job>>
@@ -73,18 +73,18 @@ interface IJobsApi {
   deleteJob(id: string | number): Promise<AxiosResponse<void>>
 }
 
-interface ICandidatesApi {
+export interface ICandidatesApi {
   getCandidates(): Promise<AxiosResponse<Candidate[]>>
   createCandidate(payload: Candidate): Promise<AxiosResponse<Candidate>>
   updateCandidate(id: number, payload: Candidate): Promise<AxiosResponse<Candidate>>
   deleteCandidate(numeCandidat: string): Promise<AxiosResponse<void>>
 }
 
-abstract class BaseApiService {
+export abstract class BaseApiService {
   constructor(protected readonly api: AxiosInstance) {}
 }
 
-class JobsApiService extends BaseApiService implements IJobsApi {
+export class JobsApiService extends BaseApiService implements IJobsApi {
   getJobs(): Promise<AxiosResponse<Job[]>> {
     return this.api.get('/api/jobs')
   }
@@ -106,7 +106,7 @@ class JobsApiService extends BaseApiService implements IJobsApi {
   }
 }
 
-class CandidatesApiService extends BaseApiService implements ICandidatesApi {
+export class CandidatesApiService extends BaseApiService implements ICandidatesApi {
   getCandidates(): Promise<AxiosResponse<Candidate[]>> {
     return this.api.get('/api/candidati')
   }
@@ -124,7 +124,7 @@ class CandidatesApiService extends BaseApiService implements ICandidatesApi {
   }
 }
 
-class ApiFacade implements IJobsApi, ICandidatesApi {
+export class ApiFacade implements IJobsApi, ICandidatesApi {
   constructor(
     private readonly jobsApi: IJobsApi,
     private readonly candidatesApi: ICandidatesApi,
@@ -168,88 +168,10 @@ class ApiFacade implements IJobsApi, ICandidatesApi {
   }
 }
 
-const apiFacade = new ApiFacade(
+export const apiClient = new ApiFacade(
   new JobsApiService(httpClient),
   new CandidatesApiService(httpClient),
   httpClient,
 )
 
-export default {
-  // =========================
-  // JOBS
-  // =========================
-
-  /**
-   * Obține toate joburile.
-   */
-  getJobs() {
-    return apiFacade.getJobs()
-  },
-
-  /**
-   * Obține un job după ID.
-   */
-  getJob(id: string | number) {
-    return apiFacade.getJob(id)
-  },
-
-  /**
-   * Creează un job nou.
-   */
-  createJob(payload: Job) {
-    return apiFacade.createJob(payload)
-  },
-
-  /**
-   * Actualizează un job existent.
-   */
-  updateJob(id: string | number, payload: Job) {
-    return apiFacade.updateJob(id, payload)
-  },
-
-  /**
-   * Șterge un job după ID.
-   */
-  deleteJob(id: string | number) {
-    return apiFacade.deleteJob(id)
-  },
-
-  // =========================
-  // CANDIDAȚI
-  // =========================
-
-  /**
-   * Obține lista tuturor candidaților.
-   */
-  getCandidates() {
-    return apiFacade.getCandidates()
-  },
-
-  /**
-   * Adaugă un candidat nou.
-   */
-  createCandidate(payload: Candidate) {
-    return apiFacade.createCandidate(payload)
-  },
-
-  /**
-   * Modifică datele unui candidat.
-   */
-  updateCandidate(id: number, payload: Candidate) {
-    return apiFacade.updateCandidate(id, payload)
-  },
-
-  /**
-   * Șterge un candidat după nume.
-   * Conform endpoint-ului din Swagger:
-   * DELETE /api/candidati/{numeCandidat}
-   */
-  deleteCandidate(numeCandidat: string) {
-    return apiFacade.deleteCandidate(numeCandidat)
-  },
-
-  /**
-   * Expune instanța Axios pentru utilizări avansate.
-   */
-  axios: apiFacade.axios,
-}
+export default apiClient

@@ -98,7 +98,7 @@ export class JARJWTLogin extends AuthLoginService {
   public constructor(apiBaseUrl = import.meta.env.VITE_BACKEND) {
     super()
 
-    this.apiBaseUrl = apiBaseUrl + '/auth/'
+    this.apiBaseUrl = `${apiBaseUrl.replace(/\/$/, '')}/auth`
   }
 
   /**
