@@ -16,7 +16,9 @@
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "test:smoke:api": "powershell -ExecutionPolicy Bypass -File ./scripts/smoke-api-auth.ps1",
+    "deploy": "npm run build && aws s3 sync dist/ s3://YOUR_BUCKET_NAME --delete && aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths \"/*\""
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.7.0",
