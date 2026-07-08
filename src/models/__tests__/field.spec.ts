@@ -16,7 +16,7 @@ describe('Field decorator registry and AbstractDTOEntity', () => {
     }
 
     const instance = new Person()
-    const meta = dtoMetadata.get(Person as unknown as Constructor)
+    const meta = dtoMetadata.get(Person as Constructor)
     expect(meta).toBeDefined()
     expect(meta!.has('name')).toBe(true)
     expect(meta!.has('birth')).toBe(true)

@@ -1,11 +1,12 @@
 import { expect, test } from 'vitest'
 
 function getMetadataObject(target: object): Record<PropertyKey, unknown> | undefined {
-  const metadata = (target as any)[Symbol.metadata] as Record<PropertyKey, unknown> | undefined
+  const targetRecord = target as Record<PropertyKey, unknown>
+  const metadata = targetRecord[Symbol.metadata] as Record<PropertyKey, unknown> | undefined
   if (metadata !== undefined) {
     return metadata
   }
-  return (target as any)[Symbol.for('Symbol.metadata')] as Record<PropertyKey, unknown> | undefined
+  return targetRecord[Symbol.for('Symbol.metadata')] as Record<PropertyKey, unknown> | undefined
 }
 
 test('Symbol metadata key is available', () => {

@@ -20,6 +20,8 @@ class FakeAuthService extends AuthLoginService {
 }
 
 function createAuth0ClientStub(): Auth0VueClient {
+  // In acest test avem nevoie doar de campurile minime folosite de factory.
+  // Auth0VueClient expune multe alte campuri, deci folosim un cast controlat.
   return {
     isAuthenticated: ref(false),
     loginWithRedirect: vi.fn(),
