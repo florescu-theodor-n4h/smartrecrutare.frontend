@@ -1,6 +1,6 @@
 import { httpClient } from '@/services/httpClient'
 
-export interface NotificationItem {
+interface NotificationItem {
   id?: string | number
   notificareId?: string | number
   mesajId?: string
@@ -14,7 +14,7 @@ export interface NotificationItem {
   [key: string]: unknown
 }
 
-export const notificationsApi = {
+const notificationsApi = {
   getMyNotifications() {
     return httpClient.get<NotificationItem[]>('/api/analytics/notifications/me')
   },
@@ -34,3 +34,6 @@ export const notificationsApi = {
     return httpClient.post<NotificationItem>('/api/admin/analytics/notifications', payload)
   },
 }
+
+export type { NotificationItem }
+export { notificationsApi }

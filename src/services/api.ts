@@ -4,7 +4,7 @@ import { AbstractDTOEntity } from '@/models/AbstractDTOEntity'
 import { httpClient } from '@/services/httpClient'
 import type { AxiosInstance, AxiosResponse } from 'axios'
 
-export enum TipContract {
+enum TipContract {
   FullTime = 'Full-time',
   PartTime = 'Part-time',
   Contract = 'Contract',
@@ -14,7 +14,7 @@ export enum TipContract {
 /**
  * Model pentru un job/post disponibil.
  */
-export class Job extends AbstractDTOEntity {
+class Job extends AbstractDTOEntity {
   @Exclude()
   id?: number
 
@@ -49,7 +49,7 @@ export class Job extends AbstractDTOEntity {
 /**
  * Model pentru candidat conform Swagger.
  */
-export class Candidate {
+class Candidate {
   @Exclude()
   id?: number
 
@@ -65,7 +65,7 @@ export class Candidate {
 
 //type PostCandidate = Omit<Candidate, 'id'>
 
-export interface IJobsApi {
+interface IJobsApi {
   getJobs(): Promise<AxiosResponse<Job[]>>
   getJob(id: string | number): Promise<AxiosResponse<Job>>
   createJob(payload: Job): Promise<AxiosResponse<Job>>
@@ -73,18 +73,18 @@ export interface IJobsApi {
   deleteJob(id: string | number): Promise<AxiosResponse<void>>
 }
 
-export interface ICandidatesApi {
+interface ICandidatesApi {
   getCandidates(): Promise<AxiosResponse<Candidate[]>>
   createCandidate(payload: Candidate): Promise<AxiosResponse<Candidate>>
   updateCandidate(id: number, payload: Candidate): Promise<AxiosResponse<Candidate>>
   deleteCandidate(numeCandidat: string): Promise<AxiosResponse<void>>
 }
 
-export abstract class BaseApiService {
+abstract class BaseApiService {
   constructor(protected readonly api: AxiosInstance) {}
 }
 
-export class JobsApiService extends BaseApiService implements IJobsApi {
+class JobsApiService extends BaseApiService implements IJobsApi {
   getJobs(): Promise<AxiosResponse<Job[]>> {
     return this.api.get('/api/jobs')
   }
@@ -106,7 +106,7 @@ export class JobsApiService extends BaseApiService implements IJobsApi {
   }
 }
 
-export class CandidatesApiService extends BaseApiService implements ICandidatesApi {
+class CandidatesApiService extends BaseApiService implements ICandidatesApi {
   getCandidates(): Promise<AxiosResponse<Candidate[]>> {
     return this.api.get('/api/candidati')
   }
@@ -124,7 +124,7 @@ export class CandidatesApiService extends BaseApiService implements ICandidatesA
   }
 }
 
-export class ApiFacade implements IJobsApi, ICandidatesApi {
+class ApiFacade implements IJobsApi, ICandidatesApi {
   constructor(
     private readonly jobsApi: IJobsApi,
     private readonly candidatesApi: ICandidatesApi,
@@ -168,10 +168,21 @@ export class ApiFacade implements IJobsApi, ICandidatesApi {
   }
 }
 
-export const apiClient = new ApiFacade(
+const apiClient = new ApiFacade(
   new JobsApiService(httpClient),
   new CandidatesApiService(httpClient),
   httpClient,
 )
 
+export type { ICandidatesApi, IJobsApi }
+export {
+  ApiFacade,
+  BaseApiService,
+  Candidate,
+  CandidatesApiService,
+  Job,
+  JobsApiService,
+  TipContract,
+  apiClient,
+}
 export default apiClient

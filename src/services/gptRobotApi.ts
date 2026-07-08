@@ -1,6 +1,6 @@
 import { httpClient } from '@/services/httpClient'
 
-export interface ConversationSummary {
+interface ConversationSummary {
   id?: string | number
   conversationId?: string | number
   title?: string
@@ -12,7 +12,7 @@ export interface ConversationSummary {
   [key: string]: unknown
 }
 
-export interface ConversationMessage {
+interface ConversationMessage {
   id?: string | number
   messageId?: string | number
   conversationId?: string | number
@@ -26,7 +26,7 @@ export interface ConversationMessage {
   [key: string]: unknown
 }
 
-export interface PagedMessagesResponse {
+interface PagedMessagesResponse {
   items?: ConversationMessage[]
   content?: ConversationMessage[]
   total?: number
@@ -36,12 +36,12 @@ export interface PagedMessagesResponse {
   [key: string]: unknown
 }
 
-export interface ListMessagesParams {
+interface ListMessagesParams {
   page?: number
   size?: number
 }
 
-export const gptRobotApi = {
+const gptRobotApi = {
   listConversations() {
     return httpClient.get<ConversationSummary[]>('/bot/gpt-robot/conversations')
   },
@@ -123,3 +123,6 @@ export const gptRobotApi = {
     return httpClient.post<Record<string, unknown>>('/bot/gpt-robot/user-chat', payload)
   },
 }
+
+export type { ConversationMessage, ConversationSummary, ListMessagesParams, PagedMessagesResponse }
+export { gptRobotApi }
