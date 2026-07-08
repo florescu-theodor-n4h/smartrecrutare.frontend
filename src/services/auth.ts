@@ -1,4 +1,6 @@
 import type { App, InjectionKey, Ref } from 'vue'
+// importam pentru a folosi inject()
+import { inject } from 'vue'
 
 /**
  * Cheie de injectare pentru adaugarea Plugin-ului acestuia in
@@ -57,4 +59,13 @@ export abstract class AuthLoginService {
     app.provide(AuthLoginKey, this)
     app.config.globalProperties.$auth = this
   }
+}
+
+export function useAuthLoginPlugin(): AuthLoginService {
+  const authLogin = inject(AuthLoginKey)
+  if (!authLogin) {
+    alert('programming bug: AuthLogin plugin is not installed')
+    throw new Error('AuthLogin plugin is not installed')
+  }
+  return authLogin
 }

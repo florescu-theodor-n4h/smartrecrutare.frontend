@@ -172,7 +172,10 @@ export class JARJWTLogin extends AuthLoginService {
  * @returns   {AuthLoginService} Instanta a serviciului de autentificare ales
  */
 export function createAuthLoginPlugin(auth0: Auth0VueClient): AuthLoginService {
-  const useJarJwtLogin = import.meta.env.VITE_USE_JAR_JWT_LOGIN === 'true'
+  const useJarJwtLogin =
+    import.meta.env.VITE_USE_JAR_JWT_LOGIN === 'true' ||
+    import.meta.env.VITE_REQUIRE_PAR === 'true' ||
+    import.meta.env.VITE_REQUIRE_JAR === 'true'
 
   if (useJarJwtLogin) {
     return new JARJWTLogin('/api')
