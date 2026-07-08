@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue'
-import { AuthLoginService } from '@/services/auth'
+import { AuthLoginService } from './auth.contract'
 import type { Auth0VueClient } from '@auth0/auth0-vue'
 
 /**
@@ -8,7 +8,7 @@ import type { Auth0VueClient } from '@auth0/auth0-vue'
  * Aceasta clasa integreaza SDK-ul Auth0 Vue pentru a gestiona autentificarea
  * utilizatorilor intr-o aplicatie single page folosind protocolul OAuth2/OIDC.
  */
-export class AuthSPAService extends AuthLoginService {
+class AuthSPAService extends AuthLoginService {
   /**
    * Referinta reactiva la starea de autentificare de la Auth0 SDK.
    */
@@ -79,7 +79,7 @@ type MeResponse = {
  * Aceasta clasa utilizeaza un API backend pentru a gestiona autentificarea
  * utilizatorilor prin intermediul JWT (JSON Web Tokens) si cookie-uri de sesiune.
  */
-export class JARJWTLogin extends AuthLoginService {
+class JARJWTLogin extends AuthLoginService {
   /**
    * Starea reactiva de autentificare, initializata ca false.
    */
@@ -95,7 +95,7 @@ export class JARJWTLogin extends AuthLoginService {
    *
    * @param {string} apiBaseUrl - URL-ul de baza al API-ului, implicit '/api'
    */
-  public constructor(apiBaseUrl = import.meta.env.VITE_BACKEND) {
+  public constructor(apiBaseUrl = import.meta.env.VITE_BACKEND || '/api') {
     super()
 
     this.apiBaseUrl = `${apiBaseUrl.replace(/\/$/, '')}/auth`
@@ -171,15 +171,8 @@ export class JARJWTLogin extends AuthLoginService {
  * @param auth0 - Clientul Auth0 Vue, daca se foloseste Auth0 SPA
  * @returns   {AuthLoginService} Instanta a serviciului de autentificare ales
  */
-export function createAuthLoginPlugin(auth0: Auth0VueClient): AuthLoginService {
-  const useJarJwtLogin =
-    import.meta.env.VITE_USE_JAR_JWT_LOGIN === 'true' ||
-    import.meta.env.VITE_REQUIRE_PAR === 'true' ||
-    import.meta.env.VITE_REQUIRE_JAR === 'true'
-
-  if (useJarJwtLogin) {
-    return new JARJWTLogin('/api')
-  }
-
+function createAuthLoginPlugin(auth0: Auth0VueClient): AuthLoginService {
   return new AuthSPAService(auth0)
 }
+
+export { AuthSPAService, JARJWTLogin, createAuthLoginPlugin }

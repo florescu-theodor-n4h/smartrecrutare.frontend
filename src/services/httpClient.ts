@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosHeaders } from 'axios'
 import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
 const rawHost =
@@ -15,15 +15,17 @@ function normalizeBaseUrl(value?: string): string {
   return 'http://localhost:8080'
 }
 
-export const API_BASE_URL = normalizeBaseUrl(rawHost)
+const API_BASE_URL = normalizeBaseUrl(rawHost)
 
-export const httpClient = axios.create({
+const httpClient = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 })
+
+let authBearerToken: string | null = null
 
 interface HttpLogger {
   info(message: string, meta?: Record<string, unknown>): void
@@ -47,6 +49,12 @@ function fullUrl(config: InternalAxiosRequestConfig): string {
 }
 
 httpClient.interceptors.request.use((config) => {
+  if (authBearerToken && !config.headers?.Authorization) {
+    const headers = AxiosHeaders.from(config.headers)
+    headers.set('Authorization', `Bearer ${authBearerToken}`)
+    config.headers = headers
+  }
+
   logger.info('Request started', {
     method: (config.method || 'GET').toUpperCase(),
     url: fullUrl(config),
@@ -74,6 +82,27 @@ httpClient.interceptors.response.use(
   },
 )
 
-export function getActiveApiBaseUrl(): string {
+function getActiveApiBaseUrl(): string {
   return API_BASE_URL
+}
+
+function setHttpAuthBearerToken(token: string): void {
+  authBearerToken = token
+}
+
+function clearHttpAuthBearerToken(): void {
+  authBearerToken = null
+}
+
+function getHttpAuthBearerToken(): string | null {
+  return authBearerToken
+}
+
+export {
+  API_BASE_URL,
+  clearHttpAuthBearerToken,
+  getActiveApiBaseUrl,
+  getHttpAuthBearerToken,
+  httpClient,
+  setHttpAuthBearerToken,
 }
