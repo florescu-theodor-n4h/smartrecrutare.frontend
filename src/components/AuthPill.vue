@@ -338,8 +338,10 @@ function logoutUser(): void {
   void activeService.logout({ logoutParams: { returnTo: window.location.origin } })
 }
 
-function closeLoginModal(): void {
-  if (submittingLocalLogin.value) {
+function closeLoginModal(forceOrEvent: boolean | Event = false): void {
+  const force = typeof forceOrEvent === 'boolean' ? forceOrEvent : false
+
+  if (submittingLocalLogin.value && !force) {
     return
   }
 
@@ -399,7 +401,7 @@ onBeforeUnmount(() => {
  */
 watch(isAuthenticated, (authenticated) => {
   if (authenticated && showLoginModal.value) {
-    closeLoginModal()
+    closeLoginModal(true)
   }
 })
 
@@ -438,7 +440,7 @@ async function submitLocalLogin(): Promise<void> {
     if (localService) {
       masterAuthPlugin.saveLoginStatus(true)
     }
-    closeLoginModal()
+    closeLoginModal(true)
   } catch {
     loginError.value = t('authPill.local.loginFailed')
   } finally {
@@ -468,7 +470,7 @@ async function submitLocalRegister(): Promise<void> {
       email: registerForm.value.email,
       password: registerForm.value.password,
     })
-    closeLoginModal()
+    closeLoginModal(true)
   } catch {
     loginError.value = t('authPill.local.registerFailed')
   } finally {
