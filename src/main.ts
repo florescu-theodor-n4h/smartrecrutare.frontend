@@ -18,6 +18,7 @@ import {
   getAuthEnvironmentConfig,
   getPreferredAuthMode,
 } from './services/auth'
+import { authBanner, authLog, authWarn } from './services/auth-debug'
 import { normalizeAuth0Domain } from './services/auth-utils'
 
 //import { piniaThemePlugin } from './plugins/pinia-theme.plugin'
@@ -28,12 +29,34 @@ const pinia = createPinia()
 const authConfig = getAuthEnvironmentConfig(import.meta.env)
 
 const authMode = getPreferredAuthMode(authConfig)
+authBanner('Application bootstrap auth mode resolved', { authMode })
 
 let auth0Client: Auth0VueClient | undefined
 
+if (authMode === 'local') {
+  const search = new URLSearchParams(window.location.search)
+  const authError = search.get('error')
+  const authState = search.get('state')
+
+  if (authError && authState) {
+    authWarn('Removing stale auth callback query params while in local mode', {
+      authError,
+      hadState: true,
+      path: window.location.pathname,
+    })
+    window.history.replaceState({}, document.title, window.location.pathname)
+  }
+}
+
 if (authMode === 'auth0') {
+  const normalizedDomain = normalizeAuth0Domain(auth0Config.domain)
+  authBanner('Bootstrapping Auth0 plugin', {
+    domain: normalizedDomain,
+    clientIdSuffix: auth0Config.clientId.slice(-6),
+  })
+
   const auth0: Auth0Plugin = createAuth0({
-    domain: normalizeAuth0Domain(auth0Config.domain),
+    domain: normalizedDomain,
     clientId: auth0Config.clientId,
     authorizationParams: auth0Config.authorizationParams,
   })
@@ -43,11 +66,13 @@ if (authMode === 'auth0') {
 }
 
 const authLoginPlugin = createAuthLoginService({ auth0Client, config: authConfig })
+authLog('Auth login plugin created and ready for installation')
 
 //pinia.use(piniaThemePlugin)
 app.use(pinia)
 app.use(router)
 app.use(i18n)
 app.use(authLoginPlugin)
+authBanner('Auth login plugin installed into Vue app')
 
 app.mount('#app')

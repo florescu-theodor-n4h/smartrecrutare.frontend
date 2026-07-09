@@ -1,5 +1,6 @@
 import { ref, type Ref } from 'vue'
 import { AuthLoginService } from './auth.contract'
+import { authBanner, authError, authLog, authWarn } from './auth-debug'
 import type { Auth0VueClient } from '@auth0/auth0-vue'
 
 type LogoutOptions = {
@@ -46,6 +47,9 @@ class AuthSPAService extends AuthLoginService {
 
     this.auth0 = auth0
     this.isAuthenticated = auth0.isAuthenticated
+    authBanner('AuthSPAService initialized', {
+      initialIsAuthenticated: this.isAuthenticated.value,
+    })
   }
 
   /**
@@ -55,6 +59,7 @@ class AuthSPAService extends AuthLoginService {
    * @returns {Promise<void>} Promisiune care se rezolva cand redirectarea este initiata
    */
   public async loginWithRedirect(options?: unknown): Promise<void> {
+    authBanner('AuthSPAService.loginWithRedirect called', { hasOptions: options !== undefined })
     await this.auth0.loginWithRedirect(options as never)
   }
 
@@ -69,6 +74,9 @@ class AuthSPAService extends AuthLoginService {
   public async checkAuth(): Promise<void> {
     // Auth0 Vue SDK maintains this ref itself.
     // Nothing extra is needed here.
+    authLog('AuthSPAService.checkAuth noop executed (managed by Auth0 SDK)', {
+      isAuthenticated: this.isAuthenticated.value,
+    })
   }
 
   /**
@@ -78,6 +86,7 @@ class AuthSPAService extends AuthLoginService {
    * @returns {Promise<void>} Promisiune care se rezolva cand delogarea este completa
    */
   public override async logout(options?: unknown): Promise<void> {
+    authBanner('AuthSPAService.logout called', { hasOptions: options !== undefined })
     await this.auth0.logout(options as Parameters<Auth0VueClient['logout']>[0])
   }
 }
@@ -116,6 +125,7 @@ class JARJWTLogin extends AuthLoginService {
     super()
 
     this.apiBaseUrl = `${apiBaseUrl.replace(/\/$/, '')}/auth`
+    authBanner('JARJWTLogin initialized', { apiBaseUrl: this.apiBaseUrl })
   }
 
   /**
@@ -124,6 +134,9 @@ class JARJWTLogin extends AuthLoginService {
    * @returns {Promise<void>} Promisiune care se rezolva cand redirectarea este initiata
    */
   public async loginWithRedirect(): Promise<void> {
+    authBanner('JARJWTLogin.loginWithRedirect called', {
+      redirectUrl: `${this.apiBaseUrl}/login`,
+    })
     window.location.href = `${this.apiBaseUrl}/login`
   }
 
@@ -138,6 +151,7 @@ class JARJWTLogin extends AuthLoginService {
    * @throws {Error} Daca request-ul catre API esueaza (cu status diferit de 401)
    */
   public async checkAuth(): Promise<void> {
+    authLog('JARJWTLogin.checkAuth started', { meEndpoint: `${this.apiBaseUrl}/me` })
     const response = await fetch(`${this.apiBaseUrl}/me`, {
       method: 'GET',
       credentials: 'include',
@@ -148,17 +162,24 @@ class JARJWTLogin extends AuthLoginService {
 
     if (response.status === 401) {
       this.isAuthenticated.value = false
+      authWarn('JARJWTLogin.checkAuth received 401, marking unauthenticated')
       return
     }
 
     if (!response.ok) {
       this.isAuthenticated.value = false
+      authError('JARJWTLogin.checkAuth failed with non-OK response', {
+        status: response.status,
+      })
       throw new Error(`Failed to check authentication: ${response.status}`)
     }
 
     const data = (await response.json()) as MeResponse
 
     this.isAuthenticated.value = data.authenticated === true
+    authBanner('JARJWTLogin.checkAuth completed', {
+      authenticated: this.isAuthenticated.value,
+    })
   }
 
   /**
@@ -171,20 +192,26 @@ class JARJWTLogin extends AuthLoginService {
    * @returns {Promise<void>} Promisiune care se rezolva cand delogarea este finalizata
    */
   public override async logout(options?: unknown): Promise<void> {
+    authBanner('JARJWTLogin.logout called', { hasOptions: options !== undefined })
     await fetch(`${this.apiBaseUrl}/logout`, {
       method: 'POST',
       credentials: 'include',
     }).catch(() => {
       // Avoid leaving the frontend stuck as authenticated
       // if logout endpoint is missing or temporarily unavailable.
+      authWarn('JARJWTLogin.logout network call failed; continuing with local logout state')
     })
 
     this.isAuthenticated.value = false
 
     const returnTo = extractLogoutReturnTo(options)
     if (returnTo) {
+      authLog('JARJWTLogin.logout redirecting after logout', { returnTo })
       this.redirectAfterLogout(returnTo)
+      return
     }
+
+    authLog('JARJWTLogin.logout completed without redirect')
   }
 
   protected redirectAfterLogout(returnTo: string): void {
