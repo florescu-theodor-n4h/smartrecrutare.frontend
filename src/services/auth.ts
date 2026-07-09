@@ -8,7 +8,6 @@ type AuthMode = 'auth0' | 'local'
 
 type AuthEnvironmentConfig = {
   VITE_PREFERRED_AUTH?: string
-  VITE_PREFFERRED_AUTH?: string
   VITE_PREFERRED_LOGIN?: string
   VITE_DISABLE_LOCAL_LOGIN?: string
   VITE_REQUIRE_PAR?: string
@@ -23,7 +22,6 @@ type CreateAuthLoginServiceArgs = {
 
 type AuthEnvironmentSource = {
   VITE_PREFERRED_AUTH?: unknown
-  VITE_PREFFERRED_AUTH?: unknown
   VITE_PREFERRED_LOGIN?: unknown
   VITE_DISABLE_LOCAL_LOGIN?: unknown
   VITE_REQUIRE_PAR?: unknown
@@ -43,7 +41,6 @@ function readString(value: unknown): string | undefined {
 function getAuthEnvironmentConfig(source: AuthEnvironmentSource): AuthEnvironmentConfig {
   const config = {
     VITE_PREFERRED_AUTH: readString(source.VITE_PREFERRED_AUTH),
-    VITE_PREFFERRED_AUTH: readString(source.VITE_PREFFERRED_AUTH),
     VITE_PREFERRED_LOGIN: readString(source.VITE_PREFERRED_LOGIN),
     VITE_DISABLE_LOCAL_LOGIN: readString(source.VITE_DISABLE_LOCAL_LOGIN),
     VITE_REQUIRE_PAR: readString(source.VITE_REQUIRE_PAR),
@@ -89,8 +86,7 @@ function getPreferredAuthMode(config: AuthEnvironmentConfig): AuthMode {
     return primaryPreferred
   }
 
-  const explicitPreferred =
-    normalizeAuthMode(config.VITE_PREFFERRED_AUTH) || normalizeAuthMode(config.VITE_PREFERRED_LOGIN)
+  const explicitPreferred = normalizeAuthMode(config.VITE_PREFERRED_LOGIN)
 
   const mode = explicitPreferred || 'auth0'
 

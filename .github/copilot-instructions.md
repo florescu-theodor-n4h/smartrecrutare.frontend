@@ -94,7 +94,8 @@ Role typing must be explicit. Use typed union or enum for:
 - Local auth must be selectable by environment.
 - Local auth must not force Auth0 plugin creation.
 - Prefer VITE_PREFERRED_AUTH.
-- Preserve backward compatibility with VITE_PREFFERRED_AUTH if already present.
+- Preserve backward compatibility with VITE_PREFERRED_LOGIN if already present.
+- Keep VITE_DISABLE_LOCAL_LOGIN as a safety flag.
 - Use /auth/local/login and /auth/local/me for local auth flows.
 
 ## Testing And Validation Rules

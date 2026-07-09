@@ -42,27 +42,16 @@ describe('auth factory mode behavior', () => {
     expect(getPreferredAuthMode(config)).toBe('local')
   })
 
-  it('falls back to misspelled VITE_PREFFERRED_AUTH when preferred is missing', async () => {
+  it('defaults to auth0 when VITE_PREFERRED_AUTH is missing', async () => {
     const { getPreferredAuthMode } = await import('../auth')
-    const config: AuthEnvironmentConfig = { VITE_PREFFERRED_AUTH: 'local' }
+    const config: AuthEnvironmentConfig = {}
 
-    expect(getPreferredAuthMode(config)).toBe('local')
+    expect(getPreferredAuthMode(config)).toBe('auth0')
   })
 
-  it('supports VITE_PREFERRED_LOGIN compatibility flag', async () => {
+  it('keeps explicit VITE_PREFERRED_AUTH as the only source of truth', async () => {
     const { getPreferredAuthMode } = await import('../auth')
-    const config: AuthEnvironmentConfig = { VITE_PREFERRED_LOGIN: 'local' }
-
-    expect(getPreferredAuthMode(config)).toBe('local')
-  })
-
-  it('keeps explicit VITE_PREFERRED_AUTH as source of truth when legacy flags conflict', async () => {
-    const { getPreferredAuthMode } = await import('../auth')
-    const config: AuthEnvironmentConfig = {
-      VITE_PREFERRED_AUTH: 'local',
-      VITE_DISABLE_LOCAL_LOGIN: 'true',
-      VITE_PREFERRED_LOGIN: 'auth0',
-    }
+    const config: AuthEnvironmentConfig = { VITE_PREFERRED_AUTH: 'local' }
 
     expect(getPreferredAuthMode(config)).toBe('local')
   })
@@ -71,9 +60,8 @@ describe('auth factory mode behavior', () => {
     const { getAuthEnvironmentConfig } = await import('../auth')
     const config = getAuthEnvironmentConfig({
       VITE_PREFERRED_AUTH: 'local',
-      VITE_PREFFERRED_AUTH: 'auth0',
-      VITE_PREFERRED_LOGIN: 'local',
-      VITE_DISABLE_LOCAL_LOGIN: 'false',
+      VITE_PREFERRED_LOGIN: 'auth0',
+      VITE_DISABLE_LOCAL_LOGIN: 'true',
       VITE_REQUIRE_PAR: 'true',
       VITE_REQUIRE_JAR: 'false',
       VITE_USE_JAR_JWT_LOGIN: 'false',
@@ -81,22 +69,31 @@ describe('auth factory mode behavior', () => {
 
     expect(config).toEqual({
       VITE_PREFERRED_AUTH: 'local',
-      VITE_PREFFERRED_AUTH: 'auth0',
-      VITE_PREFERRED_LOGIN: 'local',
-      VITE_DISABLE_LOCAL_LOGIN: 'false',
+      VITE_PREFERRED_LOGIN: 'auth0',
+      VITE_DISABLE_LOCAL_LOGIN: 'true',
       VITE_REQUIRE_PAR: 'true',
       VITE_REQUIRE_JAR: 'false',
       VITE_USE_JAR_JWT_LOGIN: 'false',
     })
   })
 
+  it('keeps local mode blocked when VITE_DISABLE_LOCAL_LOGIN is true', async () => {
+    const { getPreferredAuthMode } = await import('../auth')
+    const config: AuthEnvironmentConfig = {
+      VITE_PREFERRED_LOGIN: 'local',
+      VITE_DISABLE_LOCAL_LOGIN: 'true',
+    }
+
+    expect(getPreferredAuthMode(config)).toBe('auth0')
+  })
+
   it('strips inline comments when building auth config from env-like source', async () => {
     const { getAuthEnvironmentConfig } = await import('../auth')
     const config = getAuthEnvironmentConfig({
-      VITE_PREFERRED_LOGIN: 'auth0 # or local',
+      VITE_PREFERRED_AUTH: 'local # or auth0',
     })
 
-    expect(config.VITE_PREFERRED_LOGIN).toBe('auth0')
+    expect(config.VITE_PREFERRED_AUTH).toBe('local')
   })
 
   it('uses Auth0 factory in auth0 mode', async () => {
@@ -154,7 +151,6 @@ describe('auth factory mode behavior', () => {
     createAuthLoginService({
       config: {
         VITE_PREFERRED_AUTH: 'local',
-        VITE_DISABLE_LOCAL_LOGIN: 'false',
       },
     })
 
