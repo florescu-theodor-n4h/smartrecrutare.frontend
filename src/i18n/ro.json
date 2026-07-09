@@ -37,6 +37,15 @@
   "authPill": {
     "login": "Autentificare",
     "logout": "Deconectare",
+    "enterprise": {
+      "methodSso": "SSO extern",
+      "methodLocal": "Credentiale locale",
+      "close": "Inchide dialogul de autentificare",
+      "showPassword": "Arata",
+      "hidePassword": "Ascunde",
+      "clear": "Curata",
+      "securityNote": "Nota de securitate: nu partaja credentialele si verifica intotdeauna destinatia inainte de autentificare."
+    },
     "sso": {
       "tab": "SSO",
       "description": "Autentifica-te cu un cont extern sau un furnizor SSO.",
@@ -74,6 +83,7 @@
     "send": "Trimite",
     "retry": "Reîncearcă",
     "loadMore": "Încarcă mai vechi",
+    "widgetHint": "Deschide chat-ul fara a parasi pagina.",
     "errors": {
       "loadConversations": "Conversațiile nu au putut fi încărcate",
       "createConversation": "Conversația nu a putut fi creată",

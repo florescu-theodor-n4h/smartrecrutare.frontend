@@ -37,6 +37,15 @@
   "authPill": {
     "login": "Sign in",
     "logout": "Logout",
+    "enterprise": {
+      "methodSso": "External SSO",
+      "methodLocal": "Local credentials",
+      "close": "Close authentication dialog",
+      "showPassword": "Show",
+      "hidePassword": "Hide",
+      "clear": "Clear",
+      "securityNote": "Security note: never share credentials and always verify the destination before sign in."
+    },
     "sso": {
       "tab": "SSO",
       "description": "Sign in using an external account or SSO provider.",
@@ -74,6 +83,7 @@
     "send": "Send",
     "retry": "Retry",
     "loadMore": "Load older",
+    "widgetHint": "Open chat without leaving this page.",
     "errors": {
       "loadConversations": "Could not load conversations",
       "createConversation": "Could not create conversation",
