@@ -1,5 +1,5 @@
 import type { Auth0VueClient } from '@auth0/auth0-vue'
-import { createAuthLoginPlugin } from './auth_auth0'
+import { createAuthLoginPlugin, registerAuth0Client } from './auth_auth0'
 import { AuthLoginKey, AuthLoginService, useAuthLoginPlugin } from './auth.contract'
 import { authBanner, authLog, authWarn } from './auth-debug'
 import { createLocalAuthLoginPlugin } from './server-auth-user-pass'
@@ -106,6 +106,10 @@ function createAuthLoginService({
   auth0Client,
   config,
 }: CreateAuthLoginServiceArgs): AuthLoginService {
+  if (auth0Client) {
+    registerAuth0Client(auth0Client)
+  }
+
   const mode = getPreferredAuthMode(config)
   authBanner('Auth service factory invoked', { mode })
 

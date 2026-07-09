@@ -1,5 +1,6 @@
 import { defineStore, getActivePinia } from 'pinia'
 import { serviciuCookies } from '@/services/cookie.service'
+import { clearHttpAuthBearerToken, setHttpAuthBearerToken } from '@/services/httpClient'
 
 type AuthUserIntention = 'login' | 'register' | null
 
@@ -8,6 +9,7 @@ type AuthSessionSnapshot = {
   savingUserIntention: boolean
   userIntention: AuthUserIntention
   disclaimer: string
+  accessToken: string | null
 }
 
 const AUTH_SESSION_COOKIE_KEY = 'auth.session'
@@ -31,6 +33,7 @@ export const useAuthSessionStore = defineStore('auth-session', {
     savingUserIntention: false,
     userIntention: null,
     disclaimer: '',
+    accessToken: null,
   }),
 
   actions: {
@@ -55,6 +58,18 @@ export const useAuthSessionStore = defineStore('auth-session', {
       if (typeof snapshot.disclaimer === 'string') {
         this.disclaimer = snapshot.disclaimer
       }
+
+      if (typeof snapshot.accessToken === 'string' && snapshot.accessToken.trim()) {
+        this.accessToken = snapshot.accessToken
+      } else {
+        this.accessToken = null
+      }
+
+      if (this.isAuthenticated && this.accessToken) {
+        setHttpAuthBearerToken(this.accessToken)
+      } else {
+        clearHttpAuthBearerToken()
+      }
     },
 
     persist(): void {
@@ -65,6 +80,7 @@ export const useAuthSessionStore = defineStore('auth-session', {
           savingUserIntention: this.savingUserIntention,
           userIntention: this.userIntention,
           disclaimer: this.disclaimer,
+          accessToken: this.accessToken,
         }),
       )
     },
@@ -86,6 +102,18 @@ export const useAuthSessionStore = defineStore('auth-session', {
 
     setDisclaimer(disclaimer: string): void {
       this.disclaimer = disclaimer
+      this.persist()
+    },
+
+    setAccessToken(accessToken: string | null): void {
+      this.accessToken = accessToken && accessToken.trim() ? accessToken : null
+
+      if (this.accessToken) {
+        setHttpAuthBearerToken(this.accessToken)
+      } else {
+        clearHttpAuthBearerToken()
+      }
+
       this.persist()
     },
   },

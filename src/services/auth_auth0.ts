@@ -1,4 +1,4 @@
-import { ref, toRef, type Ref } from 'vue'
+import { ref, toRef, type Ref, watch } from 'vue'
 import { AuthLoginService } from './auth.contract'
 import { authBanner, authError, authLog, authWarn } from './auth-debug'
 import type { Auth0VueClient } from '@auth0/auth0-vue'
@@ -73,6 +73,7 @@ function createAuthLoginPlugin(
     useJarJwtLogin: config?.VITE_USE_JAR_JWT_LOGIN,
     requireJar: config?.VITE_REQUIRE_JAR,
   })
+  registerAuth0Client(auth0)
   return new AuthSPAService(auth0)
 }
 
@@ -156,10 +157,28 @@ class AuthSPAService extends AbstractAuthAuth0Service {
    */
   public constructor(auth0: Auth0VueClient) {
     super(auth0)
-    this.persistAuthState(auth0.isAuthenticated.value)
     authBanner('AuthSPAService initialized', {
       initialIsAuthenticated: this.isAuthenticated.value,
     })
+
+    const auth0IsLoading =
+      'isLoading' in auth0 && auth0.isLoading
+        ? (auth0.isLoading as Ref<boolean>)
+        : ref(false)
+
+    /*
+     * Sincronizeaza starea Auth0 in store doar dupa finalizarea bootstrap-ului SDK.
+     * Evita suprascrierea prematura a sesiunii rehidratate din cookie.
+     */
+    watch(
+      [auth0.isAuthenticated, auth0IsLoading],
+      ([authenticated, loading]) => {
+        if (!loading) {
+          this.persistAuthState(authenticated)
+        }
+      },
+      { immediate: true },
+    )
   }
 
   /**

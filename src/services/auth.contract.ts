@@ -113,6 +113,18 @@ abstract class AuthLoginService {
   }
 
   /**
+   * Salveaza token-ul bearer in sesiunea persistenta, daca Pinia este disponibil.
+   */
+  public saveAccessToken(accessToken: string | null): void {
+    const authSessionStore = useAuthSessionStoreSafely()
+    if (!authSessionStore) {
+      return
+    }
+
+    authSessionStore.setAccessToken(accessToken)
+  }
+
+  /**
    * Salveaza intentia utilizatorului in sesiunea persistenta, daca Pinia este disponibil.
    */
   public saveUserIntention(userIntention: 'login' | 'register' | null): void {

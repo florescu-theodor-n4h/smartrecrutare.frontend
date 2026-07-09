@@ -21,7 +21,6 @@ import {
 import { authBanner, authLog, authWarn } from './services/auth-debug'
 import { normalizeAuth0Domain } from './services/auth-utils'
 import { useAuthSessionStore } from './stores/auth.store'
-import { registerAuth0Client } from './services/auth_auth0'
 
 //import { piniaThemePlugin } from './plugins/pinia-theme.plugin'
 
@@ -68,7 +67,6 @@ if (canBootstrapAuth0) {
   })
 
   auth0Client = auth0
-  registerAuth0Client(auth0Client)
   app.use(auth0)
 }
 

@@ -159,6 +159,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
 
     setHttpAuthBearerToken(normalizedToken)
     this.isAuthenticated.value = true
+    this.saveAccessToken(normalizedToken)
     this.saveLoginStatus(true)
     authBanner('ServerAuthUserPassLogin.loginWithCredentials completed', {
       username: credentials.username,
@@ -178,6 +179,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
 
       if (accessToken) {
         setHttpAuthBearerToken(accessToken)
+        this.saveAccessToken(accessToken)
       }
 
       this.isAuthenticated.value = response.data.authenticated ?? Boolean(response.data.user)
@@ -188,6 +190,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
     } catch {
       clearHttpAuthBearerToken()
       this.isAuthenticated.value = false
+      this.saveAccessToken(null)
       this.saveLoginStatus(false)
       authWarn('ServerAuthUserPassLogin.checkAuth failed; cleared token and marked unauthenticated')
     }
@@ -197,6 +200,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
     authBanner('ServerAuthUserPassLogin.logout called')
     clearHttpAuthBearerToken()
     this.isAuthenticated.value = false
+    this.saveAccessToken(null)
     this.saveLoginStatus(false)
     authLog('ServerAuthUserPassLogin.logout completed')
   }
