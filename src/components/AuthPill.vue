@@ -267,19 +267,30 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAuthEnvironmentConfig, getPreferredAuthMode } from '@/services/auth'
 import { AuthLoginService, useAuthLoginPlugin } from '@/services/auth.contract'
+import { createSecondaryAuth0LoginService } from '@/services/auth_auth0'
 import { createLocalAuthLoginPlugin } from '@/services/server-auth-user-pass'
 
 const masterAuthPlugin: AuthLoginService = useAuthLoginPlugin()
-const isAuthenticated = masterAuthPlugin.isAuthenticated
 const { t } = useI18n()
 
 const authConfig = getAuthEnvironmentConfig(import.meta.env)
 const authMode = getPreferredAuthMode(authConfig)
 const isLocalMode = computed(() => authMode === 'local')
 const isLocalLoginAvailable = authConfig.VITE_DISABLE_LOCAL_LOGIN !== 'true'
-const isSsoAvailable = authMode === 'auth0'
+const secondarySsoService: AuthLoginService | null =
+  authMode === 'local' ? createSecondaryAuth0LoginService() : null
+const isSsoAvailable = authMode === 'auth0' || secondarySsoService !== null
 const showDualMode = isLocalLoginAvailable && isSsoAvailable
-const localService: AuthLoginService | null = showDualMode ? createLocalAuthLoginPlugin() : null
+const localService: AuthLoginService | null =
+  authMode === 'auth0' && isLocalLoginAvailable ? createLocalAuthLoginPlugin() : null
+const localAuthService = computed<AuthLoginService | null>(() =>
+  isLocalMode.value ? masterAuthPlugin : localService,
+)
+const isAuthenticated = computed(
+  () =>
+    masterAuthPlugin.isAuthenticated.value ||
+    secondarySsoService?.isAuthenticated.value === true,
+)
 
 const showLoginModal = ref(false)
 const submittingLocalLogin = ref(false)
@@ -301,17 +312,11 @@ const activeLocalActionTitle = computed(() =>
     : t('authPill.local.title'),
 )
 const localDisclaimer = computed(() => {
-  if (showDualMode) {
-    return masterAuthPlugin.getDisclaimer()
-  }
-
-  return isLocalMode.value ? masterAuthPlugin.getDisclaimer() : ''
+  return localAuthService.value?.getDisclaimer() ?? ''
 })
 const showLocalDisclaimer = computed(() => localDisclaimer.value.length > 0)
 const showSaveSession = computed(() =>
-  showDualMode
-    ? (localService?.isLocalPiniaSaveable() ?? false)
-    : masterAuthPlugin.isLocalPiniaSaveable(),
+  localAuthService.value?.isLocalPiniaSaveable() ?? false,
 )
 
 function openLoginModal(): void {
@@ -330,7 +335,8 @@ function openLoginModal(): void {
 }
 
 function logoutUser(): void {
-  void masterAuthPlugin.logout({ logoutParams: { returnTo: window.location.origin } })
+  const activeService = secondarySsoService?.isAuthenticated.value ? secondarySsoService : masterAuthPlugin
+  void activeService.logout({ logoutParams: { returnTo: window.location.origin } })
 }
 
 function closeLoginModal(): void {
@@ -401,7 +407,8 @@ watch(isAuthenticated, (authenticated) => {
 async function submitSsoLogin(): Promise<void> {
   submittingLocalLogin.value = true
   try {
-    await masterAuthPlugin.loginWithRedirect()
+    const activeService = authMode === 'auth0' ? masterAuthPlugin : secondarySsoService
+    await activeService?.loginWithRedirect()
   } finally {
     submittingLocalLogin.value = false
   }
@@ -415,7 +422,13 @@ async function submitLocalLogin(): Promise<void> {
 
   submittingLocalLogin.value = true
   loginError.value = ''
-  const activeService = localService ?? masterAuthPlugin
+  const activeService = localAuthService.value
+
+  if (!activeService) {
+    loginError.value = t('authPill.local.loginFailed')
+    submittingLocalLogin.value = false
+    return
+  }
 
   try {
     activeService.setSavingUserIntention(saveSession.value)
@@ -442,7 +455,13 @@ async function submitLocalRegister(): Promise<void> {
 
   submittingLocalLogin.value = true
   loginError.value = ''
-  const activeService = localService ?? masterAuthPlugin
+  const activeService = localAuthService.value
+
+  if (!activeService) {
+    loginError.value = t('authPill.local.registerFailed')
+    submittingLocalLogin.value = false
+    return
+  }
 
   try {
     await activeService.register({

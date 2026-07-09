@@ -21,11 +21,15 @@ import {
 import { authBanner, authLog, authWarn } from './services/auth-debug'
 import { normalizeAuth0Domain } from './services/auth-utils'
 import { useAuthSessionStore } from './stores/auth.store'
+import { registerAuth0Client } from './services/auth_auth0'
 
 //import { piniaThemePlugin } from './plugins/pinia-theme.plugin'
 
 const app = createApp(App)
 const pinia = createPinia()
+
+//pinia.use(piniaThemePlugin)
+app.use(pinia)
 
 const authConfig = getAuthEnvironmentConfig(import.meta.env)
 
@@ -33,8 +37,9 @@ const authMode = getPreferredAuthMode(authConfig)
 authBanner('Application bootstrap auth mode resolved', { authMode })
 
 let auth0Client: Auth0VueClient | undefined
+const canBootstrapAuth0 = Boolean(auth0Config.domain && auth0Config.clientId)
 
-if (authMode === 'local') {
+if (authMode === 'local' && !canBootstrapAuth0) {
   const search = new URLSearchParams(window.location.search)
   const authError = search.get('error')
   const authState = search.get('state')
@@ -49,7 +54,7 @@ if (authMode === 'local') {
   }
 }
 
-if (authMode === 'auth0') {
+if (canBootstrapAuth0) {
   const normalizedDomain = normalizeAuth0Domain(auth0Config.domain)
   authBanner('Bootstrapping Auth0 plugin', {
     domain: normalizedDomain,
@@ -63,14 +68,12 @@ if (authMode === 'auth0') {
   })
 
   auth0Client = auth0
+  registerAuth0Client(auth0Client)
   app.use(auth0)
 }
 
 const authLoginPlugin = createAuthLoginService({ auth0Client, config: authConfig })
 authLog('Auth login plugin created and ready for installation')
-
-//pinia.use(piniaThemePlugin)
-app.use(pinia)
 
 /*
  * Rehidrateaza starea de autentificare din cookie-ul persistent

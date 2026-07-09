@@ -4,6 +4,8 @@ import { authBanner, authError, authLog, authWarn } from './auth-debug'
 import type { Auth0VueClient } from '@auth0/auth0-vue'
 import { useAuthSessionStoreSafely } from '@/stores/auth.store'
 
+let registeredAuth0Client: Auth0VueClient | undefined
+
 type LogoutOptions = {
   logoutParams?: {
     returnTo?: string
@@ -72,6 +74,41 @@ function createAuthLoginPlugin(
     requireJar: config?.VITE_REQUIRE_JAR,
   })
   return new AuthSPAService(auth0)
+}
+
+function registerAuth0Client(auth0Client?: Auth0VueClient): void {
+  registeredAuth0Client = auth0Client
+}
+
+class SecondaryAuth0LoginService extends AuthLoginService {
+  public readonly isAuthenticated: Ref<boolean>
+
+  public constructor(private readonly auth0Client: Auth0VueClient) {
+    super()
+    this.isAuthenticated = auth0Client.isAuthenticated
+  }
+
+  public async loginWithRedirect(options?: unknown): Promise<void> {
+    await this.auth0Client.loginWithRedirect(options as never)
+  }
+
+  public async checkAuth(): Promise<void> {
+    authLog('SecondaryAuth0LoginService.checkAuth noop executed (managed by Auth0 SDK)', {
+      isAuthenticated: this.isAuthenticated.value,
+    })
+  }
+
+  public async logout(options?: unknown): Promise<void> {
+    await this.auth0Client.logout(options as Parameters<Auth0VueClient['logout']>[0])
+  }
+}
+
+function createSecondaryAuth0LoginService(): AuthLoginService | null {
+  if (!registeredAuth0Client) {
+    return null
+  }
+
+  return new SecondaryAuth0LoginService(registeredAuth0Client)
 }
 
 abstract class AbstractAuthAuth0Service extends AuthLoginService {
@@ -293,4 +330,10 @@ class JARJWTLogin extends AbstractAuthAuth0Service {
   }
 }
 
-export { AuthSPAService, JARJWTLogin, createAuthLoginPlugin }
+export {
+  AuthSPAService,
+  JARJWTLogin,
+  createAuthLoginPlugin,
+  createSecondaryAuth0LoginService,
+  registerAuth0Client,
+}

@@ -1,8 +1,9 @@
-import { ref, type Ref } from 'vue'
+import { ref, toRef, type Ref } from 'vue'
 import { clearHttpAuthBearerToken, httpClient, setHttpAuthBearerToken } from './httpClient'
 import { AuthLoginService } from './auth.contract'
 import { authBanner, authError, authLog, authWarn } from './auth-debug'
 import type { AuditFields, LocalUserRole, VersionFields } from './api-primitives'
+import { useAuthSessionStoreSafely } from '@/stores/auth.store'
 
 type LocalAuthUser = AuditFields &
   VersionFields & {
@@ -60,12 +61,21 @@ function isLocalLoginRequest(options: unknown): options is LocalLoginRequest {
 }
 
 class ServerAuthUserPassLogin extends AuthLoginService {
-  public readonly isAuthenticated: Ref<boolean> = ref(false)
+  public readonly isAuthenticated: Ref<boolean>
 
   private readonly config: LocalAuthServiceConfig
+  private readonly authSessionStore = useAuthSessionStoreSafely()
 
   public constructor(config?: Partial<LocalAuthServiceConfig>) {
     super()
+
+    if (this.authSessionStore) {
+      this.authSessionStore.hydrate()
+      this.isAuthenticated = toRef(this.authSessionStore, 'isAuthenticated')
+    } else {
+      this.isAuthenticated = ref(false)
+    }
+
     this.config = {
       ...DEFAULT_LOCAL_AUTH_CONFIG,
       ...config,
@@ -178,6 +188,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
     } catch {
       clearHttpAuthBearerToken()
       this.isAuthenticated.value = false
+      this.saveLoginStatus(false)
       authWarn('ServerAuthUserPassLogin.checkAuth failed; cleared token and marked unauthenticated')
     }
   }
