@@ -288,8 +288,7 @@ const localAuthService = computed<AuthLoginService | null>(() =>
 )
 const isAuthenticated = computed(
   () =>
-    masterAuthPlugin.isAuthenticated.value ||
-    secondarySsoService?.isAuthenticated.value === true,
+    masterAuthPlugin.isAuthenticated.value || secondarySsoService?.isAuthenticated.value === true,
 )
 
 const showLoginModal = ref(false)
@@ -315,9 +314,7 @@ const localDisclaimer = computed(() => {
   return localAuthService.value?.getDisclaimer() ?? ''
 })
 const showLocalDisclaimer = computed(() => localDisclaimer.value.length > 0)
-const showSaveSession = computed(() =>
-  localAuthService.value?.isLocalPiniaSaveable() ?? false,
-)
+const showSaveSession = computed(() => localAuthService.value?.isLocalPiniaSaveable() ?? false)
 
 function openLoginModal(): void {
   if (!isLocalMode.value && !showDualMode) {
@@ -335,7 +332,9 @@ function openLoginModal(): void {
 }
 
 function logoutUser(): void {
-  const activeService = secondarySsoService?.isAuthenticated.value ? secondarySsoService : masterAuthPlugin
+  const activeService = secondarySsoService?.isAuthenticated.value
+    ? secondarySsoService
+    : masterAuthPlugin
   void activeService.logout({ logoutParams: { returnTo: window.location.origin } })
 }
 
