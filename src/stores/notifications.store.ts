@@ -37,8 +37,11 @@ export const useNotificationsStore = defineStore('notifications', () => {
     notification.read = read
     notification.citita = read
 
+    const versiuneCurenta =
+      typeof notification.versiune === 'number' ? notification.versiune : 0
+
     try {
-      await notificationsApi.updateReadState(id, { read })
+      await notificationsApi.updateReadState(id, { versiune: versiuneCurenta })
     } catch (err) {
       console.error(err)
       notification.read = previous.read

@@ -13,16 +13,17 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth0 } from '@auth0/auth0-vue'
-
-const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
+import { useAuthLoginPlugin } from '@/services/auth.contract'
+//import { useAuth0 } from '@auth0/auth0-vue'
+const authLoginPlugin = useAuthLoginPlugin()
+const isAuthenticated = authLoginPlugin.isAuthenticated
 
 function login() {
-  loginWithRedirect()
+  void authLoginPlugin.loginWithRedirect()
 }
 
 function logoutUser() {
-  logout({ logoutParams: { returnTo: window.location.origin } })
+  void authLoginPlugin.logout({ logoutParams: { returnTo: window.location.origin } })
 }
 </script>
 

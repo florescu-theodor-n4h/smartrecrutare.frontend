@@ -96,7 +96,7 @@ async function loadConversations(): Promise<void> {
 
   try {
     const res = await gptRobotApi.listConversations()
-    conversations.value = Array.isArray(res.data) ? res.data : []
+    conversations.value = normalizeConversations(res.data)
 
     if (!activeConversationId.value && conversations.value.length > 0) {
       const firstConversation = conversations.value[0]
@@ -119,7 +119,10 @@ async function createConversation(): Promise<void> {
   conversationError.value = ''
 
   try {
-    const response = await gptRobotApi.createConversation({})
+    const response = await gptRobotApi.createConversation({
+      title: t('chatbot.newConversation'),
+      currentPrompt: '',
+    })
     const created = response.data
 
     await loadConversations()
@@ -136,6 +139,31 @@ async function createConversation(): Promise<void> {
   } finally {
     creatingConversation.value = false
   }
+}
+
+function normalizeConversations(data: unknown): ConversationSummary[] {
+  if (Array.isArray(data)) {
+    return data as ConversationSummary[]
+  }
+
+  if (!data || typeof data !== 'object') {
+    return []
+  }
+
+  const record = data as Record<string, unknown>
+  if (Array.isArray(record.conversations)) {
+    return record.conversations as ConversationSummary[]
+  }
+
+  if (Array.isArray(record.content)) {
+    return record.content as ConversationSummary[]
+  }
+
+  if (Array.isArray(record.items)) {
+    return record.items as ConversationSummary[]
+  }
+
+  return []
 }
 
 async function openConversation(conversation: ConversationSummary): Promise<void> {

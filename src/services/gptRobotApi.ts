@@ -1,8 +1,51 @@
 import { httpClient } from '@/services/httpClient'
 
+type Uuid = string | number
+
+type CreateConversationRequest = {
+  title: string
+  currentPrompt: string
+}
+
+type UpdateConversationRequest = {
+  title: string
+  currentPrompt: string
+  version: number
+}
+
+type UpdatePromptRequest = {
+  currentPrompt: string
+  version: number
+}
+
+type CreateMessageRequest = {
+  parentMessageId?: Uuid
+  role: 'USER' | 'ASSISTANT' | 'SYSTEM'
+  content: string
+}
+
+type UpdateMessageRequest = {
+  parentMessageId?: Uuid
+  role: 'USER' | 'ASSISTANT' | 'SYSTEM'
+  content: string
+  version: number
+}
+
+type UserChatRequest = {
+  conversationId?: Uuid
+  parentMessageId?: Uuid
+  title?: string
+  currentPrompt?: string
+} & ({ message: string } | { text: string })
+
+type MessageCountResponse = {
+  conversationId: Uuid
+  count: number
+}
+
 interface ConversationSummary {
-  id?: string | number
-  conversationId?: string | number
+  id?: Uuid
+  conversationId?: Uuid
   title?: string
   version?: number
   messageCount?: number
@@ -13,16 +56,16 @@ interface ConversationSummary {
 }
 
 interface ConversationMessage {
-  id?: string | number
-  messageId?: string | number
-  conversationId?: string | number
+  id?: Uuid
+  messageId?: Uuid
+  conversationId?: Uuid
   role?: string
   content?: string
   text?: string
   version?: number
   createdAt?: string
   updatedAt?: string
-  parentId?: string | number | null
+  parentMessageId?: Uuid | null
   [key: string]: unknown
 }
 
@@ -41,67 +84,91 @@ interface ListMessagesParams {
   size?: number
 }
 
+type VersionQuery = {
+  params: {
+    version: number
+  }
+}
+
+function withVersion(version: number): VersionQuery {
+  return {
+    params: {
+      version,
+    },
+  }
+}
+
 const gptRobotApi = {
-  listConversations() {
-    return httpClient.get<ConversationSummary[]>('/bot/gpt-robot/conversations')
+  listConversations(params: { page?: number; size?: number } = {}) {
+    if (params.page === undefined && params.size === undefined) {
+      return httpClient.get<
+        ConversationSummary[] | { conversations?: ConversationSummary[]; page?: Record<string, number> }
+      >('/bot/gpt-robot/conversations')
+    }
+
+    return httpClient.get<
+      ConversationSummary[] | { conversations?: ConversationSummary[]; page?: Record<string, number> }
+    >('/bot/gpt-robot/conversations', { params })
   },
 
-  createConversation(payload: Record<string, unknown> = {}) {
+  createConversation(payload: Partial<CreateConversationRequest> = {}) {
     return httpClient.post<ConversationSummary>('/bot/gpt-robot/conversations', payload)
   },
 
-  getConversation(conversationId: string | number) {
+  getConversation(conversationId: Uuid) {
     return httpClient.get<ConversationSummary>(`/bot/gpt-robot/conversations/${conversationId}`)
   },
 
-  updateConversation(conversationId: string | number, payload: Record<string, unknown>) {
+  updateConversation(conversationId: Uuid, payload: Partial<UpdateConversationRequest>) {
     return httpClient.put<ConversationSummary>(
       `/bot/gpt-robot/conversations/${conversationId}`,
       payload,
     )
   },
 
-  deleteConversation(conversationId: string | number) {
-    return httpClient.delete(`/bot/gpt-robot/conversations/${conversationId}`)
+  deleteConversation(conversationId: Uuid, version?: number) {
+    return version === undefined
+      ? httpClient.delete(`/bot/gpt-robot/conversations/${conversationId}`)
+      : httpClient.delete(`/bot/gpt-robot/conversations/${conversationId}`, withVersion(version))
   },
 
-  getConversationPrompt(conversationId: string | number) {
-    return httpClient.get<Record<string, unknown>>(
+  getConversationPrompt(conversationId: Uuid) {
+    return httpClient.get<{ conversationId: Uuid; currentPrompt: string; version: number }>(
       `/bot/gpt-robot/conversations/${conversationId}/prompt`,
     )
   },
 
-  updateConversationPrompt(conversationId: string | number, payload: Record<string, unknown>) {
-    return httpClient.put<Record<string, unknown>>(
+  updateConversationPrompt(conversationId: Uuid, payload: Partial<UpdatePromptRequest>) {
+    return httpClient.put<{ conversationId: Uuid; currentPrompt: string; version: number }>(
       `/bot/gpt-robot/conversations/${conversationId}/prompt`,
       payload,
     )
   },
 
-  listMessages(conversationId: string | number, params: ListMessagesParams = {}) {
+  listMessages(conversationId: Uuid, params: ListMessagesParams = {}) {
     return httpClient.get<PagedMessagesResponse>(
       `/bot/gpt-robot/conversations/${conversationId}/messages`,
       { params },
     )
   },
 
-  createMessage(conversationId: string | number, payload: Record<string, unknown>) {
+  createMessage(conversationId: Uuid, payload: Partial<CreateMessageRequest>) {
     return httpClient.post<ConversationMessage>(
       `/bot/gpt-robot/conversations/${conversationId}/messages`,
       payload,
     )
   },
 
-  getMessage(conversationId: string | number, messageId: string | number) {
+  getMessage(conversationId: Uuid, messageId: Uuid) {
     return httpClient.get<ConversationMessage>(
       `/bot/gpt-robot/conversations/${conversationId}/messages/${messageId}`,
     )
   },
 
   updateMessage(
-    conversationId: string | number,
-    messageId: string | number,
-    payload: Record<string, unknown>,
+    conversationId: Uuid,
+    messageId: Uuid,
+    payload: Partial<UpdateMessageRequest>,
   ) {
     return httpClient.put<ConversationMessage>(
       `/bot/gpt-robot/conversations/${conversationId}/messages/${messageId}`,
@@ -109,18 +176,31 @@ const gptRobotApi = {
     )
   },
 
-  deleteMessage(conversationId: string | number, messageId: string | number) {
-    return httpClient.delete(`/bot/gpt-robot/conversations/${conversationId}/messages/${messageId}`)
+  deleteMessage(conversationId: Uuid, messageId: Uuid, version?: number) {
+    return version === undefined
+      ? httpClient.delete(`/bot/gpt-robot/conversations/${conversationId}/messages/${messageId}`)
+      : httpClient.delete(
+          `/bot/gpt-robot/conversations/${conversationId}/messages/${messageId}`,
+          withVersion(version),
+        )
   },
 
-  countMessages(conversationId: string | number) {
-    return httpClient.get<number | Record<string, unknown>>(
+  countMessages(conversationId: Uuid) {
+    return httpClient.get<MessageCountResponse>(
       `/bot/gpt-robot/conversations/${conversationId}/messages/count`,
     )
   },
 
-  sendUserChat(payload: Record<string, unknown>) {
-    return httpClient.post<Record<string, unknown>>('/bot/gpt-robot/user-chat', payload)
+  sendUserChat(payload: UserChatRequest) {
+    return httpClient.post<{
+      conversation?: ConversationSummary
+      userMessage?: ConversationMessage
+      assistantMessage?: ConversationMessage
+    }>('/bot/gpt-robot/user-chat', payload)
+  },
+
+  optionsGptRobot() {
+    return httpClient.options('/bot/gpt-robot')
   },
 }
 
