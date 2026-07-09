@@ -79,8 +79,91 @@
     "apiStatus": "Status API și integrări",
     "support": "Suport și centru de ajutor",
     "roadmap": "Roadmap produs",
+    "languageTitle": "Limbă",
+    "languageLabel": "Alege limba site-ului",
+    "languages": {
+      "en": "Engleză",
+      "ro": "Română"
+    },
     "contactTitle": "Contact",
     "contactValue": "support@smartrecruit.example",
     "rights": "© {year} SmartRecruit. Toate drepturile rezervate."
+  },
+  "footerPages": {
+    "terms": {
+      "title": "Termeni și condiții",
+      "lead": "Prezentele condiții guvernează utilizarea serviciului într-o formă scurtă și tradițională.",
+      "section1": {
+        "title": "1. Domeniul de utilizare",
+        "p1": "Serviciul poate fi utilizat numai pentru operațiuni legale de recrutare și administrare internă.",
+        "p2": "Prin continuarea utilizării platformei, utilizatorul acceptă termenii de față."
+      },
+      "section2": {
+        "title": "2. Responsabilități",
+        "p1": "Fiecare parte va folosi cu grijă credențialele de acces și datele transmise.",
+        "p2": "Operatorul își rezervă dreptul de a suspenda accesul în caz de utilizare abuzivă sau încălcare a politicii."
+      },
+      "notice": "Acest rezumat este doar pentru navigarea produsului și nu constituie consultanță juridică."
+    },
+    "privacy": {
+      "title": "Politica de confidențialitate",
+      "lead": "Această politică explică, în mod obișnuit, cum sunt tratate informațiile personale.",
+      "section1": {
+        "title": "1. Date colectate",
+        "p1": "Procesăm datele de cont, autentificare și fluxurile necesare pentru funcționarea serviciului.",
+        "p2": "Limităm colectarea la informațiile necesare administrării utilizatorilor și funcționării produsului."
+      },
+      "section2": {
+        "title": "2. Tratarea datelor",
+        "p1": "Informațiile sunt păstrate numai cât este necesar pentru prestarea serviciului și conformitate.",
+        "p2": "Sunt aplicate măsuri adecvate pentru protejarea informațiilor stocate și transmise."
+      },
+      "notice": "Acest rezumat este doar pentru navigarea produsului și nu constituie consultanță juridică."
+    },
+    "cookies": {
+      "title": "Politica de cookies",
+      "lead": "Această notificare descrie cookie-urile și mecanismele similare folosite de aplicație.",
+      "section1": {
+        "title": "1. Cookie-uri esențiale",
+        "p1": "Cookie-urile esențiale susțin autentificarea, continuitatea sesiunii și preferințele salvate.",
+        "p2": "Dezactivarea lor poate afecta buna funcționare a aplicației."
+      },
+      "section2": {
+        "title": "2. Cookie-uri funcționale",
+        "p1": "Cookie-urile funcționale pot păstra tema și selecțiile de interfață pentru confort.",
+        "p2": "Niciun cookie neesențial nu este destinat să depășească scopul operațional al serviciului."
+      },
+      "notice": "Acest rezumat este doar pentru navigarea produsului și nu constituie consultanță juridică."
+    },
+    "support": {
+      "title": "Centru de suport",
+      "lead": "Această pagină arată pașii obișnuiți pentru obținerea asistenței din partea echipei.",
+      "section1": {
+        "title": "1. Cum se solicită ajutor",
+        "p1": "Includeți pagina afectată, o descriere scurtă a problemei și momentul apariției.",
+        "p2": "Pentru probleme de autentificare, menționați mesajul din consolă sau șirul de interogare dacă există."
+      },
+      "section2": {
+        "title": "2. Răspuns așteptat",
+        "p1": "Solicitările sunt analizate în ordinea primirii și tratate conform priorității operaționale.",
+        "p2": "Problemele urgente de acces ar trebui raportate cu suficiente detalii pentru reproducere."
+      },
+      "notice": "Acest rezumat este doar pentru navigarea produsului și nu constituie consultanță juridică."
+    },
+    "roadmap": {
+      "title": "Roadmap produs",
+      "lead": "Roadmap-ul prezintă direcția produsului într-o formă clară și ordonată.",
+      "section1": {
+        "title": "1. Priorități curente",
+        "p1": "Consolidăm autentificarea, paginile din footer și ecranele de referință bazate pe API.",
+        "p2": "Următorul pas este rafinarea conținutului semi-static și păstrarea navigării previzibile."
+      },
+      "section2": {
+        "title": "2. Îmbunătățiri planificate",
+        "p1": "Lucrările planificate includ mai multe ecrane de analytics, conținut ghidat și acoperire mai bună de localizare.",
+        "p2": "Actualizările vor păstra structura existentă a aplicației."
+      },
+      "notice": "Acest rezumat este doar pentru navigarea produsului și nu constituie consultanță juridică."
+    }
   }
 }

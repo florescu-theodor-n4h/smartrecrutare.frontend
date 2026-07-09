@@ -79,8 +79,91 @@
     "apiStatus": "API status and integrations",
     "support": "Support and help center",
     "roadmap": "Product roadmap",
+    "languageTitle": "Language",
+    "languageLabel": "Choose site language",
+    "languages": {
+      "en": "English",
+      "ro": "Romanian"
+    },
     "contactTitle": "Contact",
     "contactValue": "support@smartrecruit.example",
     "rights": "© {year} SmartRecruit. All rights reserved."
+  },
+  "footerPages": {
+    "terms": {
+      "title": "Terms of Service",
+      "lead": "The present terms govern the use of this service in a concise and traditional manner.",
+      "section1": {
+        "title": "1. Scope of use",
+        "p1": "The service may be used solely for lawful recruiting operations and internal administration.",
+        "p2": "By continuing to use the platform, the user acknowledges the terms set forth herein."
+      },
+      "section2": {
+        "title": "2. Responsibilities",
+        "p1": "Each party shall use reasonable care with access credentials and submitted data.",
+        "p2": "The operator reserves the right to suspend access in the event of misuse or violation of policy."
+      },
+      "notice": "This summary is for product navigation only and does not constitute legal advice."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lead": "This policy explains, in the customary manner, how personal information is handled.",
+      "section1": {
+        "title": "1. Data collected",
+        "p1": "We process account, authentication and workflow data required for the service to function.",
+        "p2": "We limit collection to information necessary for user administration and product operation."
+      },
+      "section2": {
+        "title": "2. Data handling",
+        "p1": "Information is retained only as long as needed for service delivery and compliance.",
+        "p2": "Appropriate safeguards are applied to protect stored and transmitted information."
+      },
+      "notice": "This summary is for product navigation only and does not constitute legal advice."
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "lead": "This notice describes the cookies and similar mechanisms used by the application.",
+      "section1": {
+        "title": "1. Essential cookies",
+        "p1": "Essential cookies support authentication, session continuity and saved preferences.",
+        "p2": "Disabling them may impair the proper operation of the application."
+      },
+      "section2": {
+        "title": "2. Functional cookies",
+        "p1": "Functional cookies may preserve theme and interface selections for convenience.",
+        "p2": "No non-essential cookie is intended to exceed the operational purpose of the service."
+      },
+      "notice": "This summary is for product navigation only and does not constitute legal advice."
+    },
+    "support": {
+      "title": "Support Center",
+      "lead": "This page records the customary steps for obtaining assistance from the service team.",
+      "section1": {
+        "title": "1. How to request help",
+        "p1": "Please include the affected page, a brief description of the issue and the time of occurrence.",
+        "p2": "For authentication issues, mention the visible console message or URL query string if available."
+      },
+      "section2": {
+        "title": "2. Expected response",
+        "p1": "Requests are reviewed in order of receipt and handled according to operational priority.",
+        "p2": "Urgent access problems should be reported with enough detail to reproduce the condition."
+      },
+      "notice": "This summary is for product navigation only and does not constitute legal advice."
+    },
+    "roadmap": {
+      "title": "Product Roadmap",
+      "lead": "The roadmap states the product direction in a clear and orderly fashion.",
+      "section1": {
+        "title": "1. Current priorities",
+        "p1": "We are consolidating authentication, footer pages and API-driven reference screens.",
+        "p2": "The next step is to refine the semi-static content and keep user-facing navigation predictable."
+      },
+      "section2": {
+        "title": "2. Planned improvements",
+        "p1": "Planned work includes more analytics surfaces, more guided content and stronger localization coverage.",
+        "p2": "Feature updates will continue to preserve the existing application structure."
+      },
+      "notice": "This summary is for product navigation only and does not constitute legal advice."
+    }
   }
 }

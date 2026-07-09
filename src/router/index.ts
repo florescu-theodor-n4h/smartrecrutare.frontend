@@ -42,6 +42,36 @@ const router = createRouter({
       component: () => import('../views/StatisticsView.vue'),
     },
     {
+      path: '/terms',
+      name: 'terms',
+      component: () => import('../views/FooterPageView.vue'),
+      meta: { footerPageKey: 'terms' },
+    },
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: () => import('../views/FooterPageView.vue'),
+      meta: { footerPageKey: 'privacy' },
+    },
+    {
+      path: '/cookies',
+      name: 'cookies',
+      component: () => import('../views/FooterPageView.vue'),
+      meta: { footerPageKey: 'cookies' },
+    },
+    {
+      path: '/support',
+      name: 'support',
+      component: () => import('../views/FooterPageView.vue'),
+      meta: { footerPageKey: 'support' },
+    },
+    {
+      path: '/roadmap',
+      name: 'roadmap',
+      component: () => import('../views/FooterPageView.vue'),
+      meta: { footerPageKey: 'roadmap' },
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme.store'
 const themeStore = useThemeStore()
 import NavBar from '@/components/NavBar.vue'
 import ApiStatusBar from '@/components/ApiStatusBar.vue'
 import ChatbotAndroidWidget from '@/components/ChatbotAndroidWidget.vue'
+
+const { locale } = useI18n()
+
+function setLocale(nextLocale: string): void {
+  locale.value = nextLocale
+}
 </script>
 
 <template id="wrapper">
@@ -51,21 +58,44 @@ import ChatbotAndroidWidget from '@/components/ChatbotAndroidWidget.vue'
       <section>
         <h4>{{ $t('footer.legalTitle') }}</h4>
         <ul>
-          <li>{{ $t('footer.terms') }}</li>
-          <li>{{ $t('footer.privacy') }}</li>
-          <li>{{ $t('footer.cookies') }}</li>
+          <li>
+            <RouterLink to="/terms">{{ $t('footer.terms') }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/privacy">{{ $t('footer.privacy') }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/cookies">{{ $t('footer.cookies') }}</RouterLink>
+          </li>
         </ul>
       </section>
       <section>
         <h4>{{ $t('footer.resourcesTitle') }}</h4>
         <ul>
-          <li>{{ $t('footer.apiStatus') }}</li>
-          <li>{{ $t('footer.support') }}</li>
-          <li>{{ $t('footer.roadmap') }}</li>
+          <li>
+            <RouterLink to="/statistics">{{ $t('footer.apiStatus') }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/support">{{ $t('footer.support') }}</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/roadmap">{{ $t('footer.roadmap') }}</RouterLink>
+          </li>
         </ul>
       </section>
       <section>
-        <h4>{{ $t('footer.contactTitle') }}</h4>
+        <h4>{{ $t('footer.languageTitle') }}</h4>
+        <label class="language-toggle" :for="'footer-language-select'">
+          <span>{{ $t('footer.languageLabel') }}</span>
+          <select
+            id="footer-language-select"
+            :value="locale"
+            @change="setLocale(($event.target as HTMLSelectElement).value)"
+          >
+            <option value="en">{{ $t('footer.languages.en') }}</option>
+            <option value="ro">{{ $t('footer.languages.ro') }}</option>
+          </select>
+        </label>
         <p>{{ $t('footer.contactValue') }}</p>
         <small>{{ $t('footer.rights', { year: new Date().getFullYear() }) }}</small>
       </section>
@@ -159,6 +189,26 @@ nav a:first-of-type {
 .legal-footer ul {
   margin: 0;
   padding-left: 1rem;
+}
+
+.legal-footer a {
+  color: inherit;
+}
+
+.language-toggle {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.language-toggle select {
+  width: 100%;
+  max-width: 12rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--color-text);
 }
 
 @media (max-width: 860px) {
