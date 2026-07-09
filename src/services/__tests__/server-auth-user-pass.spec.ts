@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
 import {
   clearHttpAuthBearerToken,
   getHttpAuthBearerToken,
@@ -6,6 +7,7 @@ import {
   setHttpAuthBearerToken,
 } from '../httpClient'
 import { ServerAuthUserPassLogin, type LocalAuthUser } from '../server-auth-user-pass'
+import { useAuthSessionStore } from '@/stores/auth.store'
 
 function createLocalUser(): LocalAuthUser {
   return {
@@ -29,6 +31,16 @@ describe('ServerAuthUserPassLogin integration', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
     clearHttpAuthBearerToken()
+    setActivePinia(createPinia())
+  })
+
+  it('reuses hydrated Pinia auth state when the session store is already authenticated', () => {
+    const authSessionStore = useAuthSessionStore()
+    authSessionStore.setAuthenticated(true)
+
+    const login = new ServerAuthUserPassLogin()
+
+    expect(login.isAuthenticated.value).toBe(true)
   })
 
   it('posts login request to /auth/local/login', async () => {

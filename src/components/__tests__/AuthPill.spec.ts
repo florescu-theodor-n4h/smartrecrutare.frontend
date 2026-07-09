@@ -8,6 +8,7 @@ import { AuthLoginKey } from '@/services/auth.contract'
 const mockGetAuthEnvironmentConfig = vi.fn()
 const mockGetPreferredAuthMode = vi.fn()
 const mockCreateLocalAuthLoginPlugin = vi.fn()
+const mockCreateSecondaryAuth0LoginService = vi.fn()
 
 vi.mock('@/services/auth', () => ({
   getAuthEnvironmentConfig: (...args: unknown[]) => mockGetAuthEnvironmentConfig(...args),
@@ -16,6 +17,10 @@ vi.mock('@/services/auth', () => ({
 
 vi.mock('@/services/server-auth-user-pass', () => ({
   createLocalAuthLoginPlugin: () => mockCreateLocalAuthLoginPlugin(),
+}))
+
+vi.mock('@/services/auth_auth0', () => ({
+  createSecondaryAuth0LoginService: () => mockCreateSecondaryAuth0LoginService(),
 }))
 
 type AuthServiceMock = {
@@ -63,6 +68,8 @@ describe('AuthPill', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockCreateLocalAuthLoginPlugin.mockReset()
+    mockCreateSecondaryAuth0LoginService.mockReset()
+    mockCreateSecondaryAuth0LoginService.mockReturnValue(null)
   })
 
   it('local mode: opens modal and validates required credentials', async () => {
@@ -152,6 +159,29 @@ describe('AuthPill', () => {
     await clearButton!.trigger('click')
     expect((wrapper.find('#local-login-username').element as HTMLInputElement).value).toBe('')
     expect((wrapper.find('#local-login-password').element as HTMLInputElement).value).toBe('')
+  })
+
+  it('local primary mode: shows SSO alternative and uses secondary auth service', async () => {
+    mockGetAuthEnvironmentConfig.mockReturnValue({ VITE_DISABLE_LOCAL_LOGIN: 'false' })
+    mockGetPreferredAuthMode.mockReturnValue('local')
+
+    const masterAuthPlugin = createAuthServiceMock()
+    const secondarySsoService = createAuthServiceMock()
+    mockCreateSecondaryAuth0LoginService.mockReturnValue(secondarySsoService)
+
+    const wrapper = mountAuthPill(masterAuthPlugin)
+
+    await wrapper.find('.auth-pill.login').trigger('click')
+
+    const topTabButtons = wrapper.findAll('.local-login-header .tab-pill')
+    expect(topTabButtons).toHaveLength(2)
+    expect(wrapper.text()).toContain('SSO')
+
+    await topTabButtons[0]!.trigger('click')
+    await wrapper.find('.sso-btn').trigger('click')
+
+    expect(secondarySsoService.loginWithRedirect).toHaveBeenCalledTimes(1)
+    expect(masterAuthPlugin.loginWithRedirect).not.toHaveBeenCalled()
   })
 
   /**
