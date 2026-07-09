@@ -11,6 +11,7 @@ vi.mock('../../services/cookie.service', () => ({
 
 import { serviciuCookies } from '../../services/cookie.service'
 import { useAuthSessionStore } from '../auth.store'
+import { clearHttpAuthBearerToken, getHttpAuthBearerToken } from '@/services/httpClient'
 
 const AUTH_COOKIE_KEY = 'auth.session'
 
@@ -20,6 +21,7 @@ function buildSnapshot(overrides: Record<string, unknown> = {}): string {
     savingUserIntention: false,
     userIntention: null,
     disclaimer: '',
+    accessToken: null,
     ...overrides,
   })
 }
@@ -28,6 +30,7 @@ describe('useAuthSessionStore — persistenta cookie', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.resetAllMocks()
+    clearHttpAuthBearerToken()
   })
 
   /* --- smoke: stare initiala --- */
@@ -45,7 +48,11 @@ describe('useAuthSessionStore — persistenta cookie', () => {
   /* --- hidratare din cookie --- */
   it('hydrate() restaureaza starea din cookie', () => {
     vi.mocked(serviciuCookies.get).mockReturnValue(
-      buildSnapshot({ isAuthenticated: true, userIntention: 'login' }),
+      buildSnapshot({
+        isAuthenticated: true,
+        userIntention: 'login',
+        accessToken: 'persisted-token',
+      }),
     )
 
     const store = useAuthSessionStore()
@@ -53,6 +60,8 @@ describe('useAuthSessionStore — persistenta cookie', () => {
 
     expect(store.isAuthenticated).toBe(true)
     expect(store.userIntention).toBe('login')
+    expect(store.accessToken).toBe('persisted-token')
+    expect(getHttpAuthBearerToken()).toBe('persisted-token')
   })
 
   it('hydrate() ignora cookie invalid (JSON corupt)', () => {
@@ -136,6 +145,20 @@ describe('useAuthSessionStore — persistenta cookie', () => {
     const lastCall = vi.mocked(serviciuCookies.set).mock.calls.at(-1)!
     const written = JSON.parse(lastCall[1]) as Record<string, unknown>
     expect(written.disclaimer).toBe('Sesiunea ta poate fi pastrata intre vizite')
+  })
+
+  it('setAccessToken persista tokenul si il rehidrateaza in http client', () => {
+    vi.mocked(serviciuCookies.get).mockReturnValue(undefined)
+
+    const store = useAuthSessionStore()
+    store.setAccessToken('token-sesiune')
+
+    expect(store.accessToken).toBe('token-sesiune')
+    expect(getHttpAuthBearerToken()).toBe('token-sesiune')
+
+    const lastCall = vi.mocked(serviciuCookies.set).mock.calls.at(-1)!
+    const written = JSON.parse(lastCall[1]) as Record<string, unknown>
+    expect(written.accessToken).toBe('token-sesiune')
   })
 
   /* --- ciclu complet: persist + hydrate --- */

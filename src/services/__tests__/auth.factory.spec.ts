@@ -99,9 +99,11 @@ describe('auth factory mode behavior', () => {
   it('uses Auth0 factory in auth0 mode', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const registerAuth0Client = vi.fn()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
+      registerAuth0Client,
     }))
     vi.doMock('../server-auth-user-pass', () => ({
       createLocalAuthLoginPlugin: localFactory,
@@ -113,6 +115,7 @@ describe('auth factory mode behavior', () => {
 
     createAuthLoginService({ auth0Client, config })
 
+    expect(registerAuth0Client).toHaveBeenCalledWith(auth0Client)
     expect(auth0Factory).toHaveBeenCalledWith(auth0Client, config)
     expect(localFactory).not.toHaveBeenCalled()
   })
@@ -120,9 +123,11 @@ describe('auth factory mode behavior', () => {
   it('allows jar login selection to skip Auth0 client creation', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const registerAuth0Client = vi.fn()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
+      registerAuth0Client,
     }))
     vi.doMock('../server-auth-user-pass', () => ({
       createLocalAuthLoginPlugin: localFactory,
@@ -150,9 +155,11 @@ describe('auth factory mode behavior', () => {
   it('uses local factory in local mode', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const registerAuth0Client = vi.fn()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
+      registerAuth0Client,
     }))
     vi.doMock('../server-auth-user-pass', () => ({
       createLocalAuthLoginPlugin: localFactory,
@@ -169,9 +176,11 @@ describe('auth factory mode behavior', () => {
   it('does not create Auth0 plugin in local mode', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const registerAuth0Client = vi.fn()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
+      registerAuth0Client,
     }))
     vi.doMock('../server-auth-user-pass', () => ({
       createLocalAuthLoginPlugin: localFactory,
