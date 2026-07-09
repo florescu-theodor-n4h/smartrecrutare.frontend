@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AuthSPAService, JARJWTLogin } from '../auth_auth0'
 import { ref } from 'vue'
+import { createAuthLoginPlugin } from '../auth_auth0'
 
 describe('JARJWTLogin technical behavior', () => {
   beforeEach(() => {
@@ -92,5 +93,25 @@ describe('AuthSPAService logout behavior', () => {
     await service.logout(options)
 
     expect(logoutMock).toHaveBeenCalledWith(options)
+  })
+})
+
+describe('Auth plugin factory selection', () => {
+  it('selects JAR/JWT when the env flag requests it', () => {
+    const plugin = createAuthLoginPlugin(undefined, {
+      VITE_USE_JAR_JWT_LOGIN: 'true',
+    })
+
+    expect(plugin).toBeInstanceOf(JARJWTLogin)
+  })
+
+  it('selects Auth0 SPA when the jar flag is not enabled', () => {
+    const plugin = createAuthLoginPlugin({
+      isAuthenticated: ref(false),
+      loginWithRedirect: vi.fn<() => Promise<void>>().mockResolvedValue(),
+      logout: vi.fn<() => Promise<void>>().mockResolvedValue(),
+    } as never)
+
+    expect(plugin).toBeInstanceOf(AuthSPAService)
   })
 })

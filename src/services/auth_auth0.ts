@@ -9,15 +9,68 @@ type LogoutOptions = {
   }
 }
 
+type AuthPluginEnvironmentConfig = {
+  VITE_REQUIRE_JAR?: string
+  VITE_USE_JAR_JWT_LOGIN?: string
+}
+
+function sanitizeEnvValue(value?: string): string {
+  return (value || '')
+    .replace(/\s+#.*$/, '')
+    .trim()
+    .toLowerCase()
+}
+
+function isTrueFlag(value?: string): boolean {
+  return sanitizeEnvValue(value) === 'true'
+}
+
+function shouldUseJarJwtLogin(config?: AuthPluginEnvironmentConfig): boolean {
+  if (!config) {
+    return false
+  }
+
+  return isTrueFlag(config.VITE_USE_JAR_JWT_LOGIN) || isTrueFlag(config.VITE_REQUIRE_JAR)
+}
+
 function extractLogoutReturnTo(options: unknown): string | null {
   if (!options || typeof options !== 'object') {
     return null
   }
-
   const maybeOptions = options as LogoutOptions
   const maybeReturnTo = maybeOptions.logoutParams?.returnTo
 
   return typeof maybeReturnTo === 'string' && maybeReturnTo.trim().length > 0 ? maybeReturnTo : null
+}
+
+/**
+ * Creaza un plugin de autentificare pentru Vue, alegand implementarea potrivita
+ * @param auth0 - Clientul Auth0 Vue, daca se foloseste Auth0 SPA
+ * @param config - Variabilele de mediu relevante pentru selectia implementarii
+ * @returns   {AuthLoginService} Instanta a serviciului de autentificare ales
+ */
+function createAuthLoginPlugin(
+  auth0: Auth0VueClient | undefined,
+  config?: AuthPluginEnvironmentConfig,
+): AuthLoginService {
+  if (shouldUseJarJwtLogin(config)) {
+    authBanner('Auth login plugin factory selected JAR/JWT implementation', {
+      useJarJwtLogin: config?.VITE_USE_JAR_JWT_LOGIN,
+      requireJar: config?.VITE_REQUIRE_JAR,
+    })
+    return new JARJWTLogin()
+  }
+
+  if (!auth0) {
+    authError('Auth login plugin factory selected Auth0 SPA but no Auth0 client was provided')
+    throw new Error('Auth0 client is required when Auth0 SPA login is selected')
+  }
+
+  authBanner('Auth login plugin factory selected Auth0 SPA implementation', {
+    useJarJwtLogin: config?.VITE_USE_JAR_JWT_LOGIN,
+    requireJar: config?.VITE_REQUIRE_JAR,
+  })
+  return new AuthSPAService(auth0)
 }
 
 /**
@@ -217,15 +270,6 @@ class JARJWTLogin extends AuthLoginService {
   protected redirectAfterLogout(returnTo: string): void {
     window.location.assign(returnTo)
   }
-}
-
-/**
- * Creaza un plugin de autentificare pentru Vue, alegand implementarea potrivita
- * @param auth0 - Clientul Auth0 Vue, daca se foloseste Auth0 SPA
- * @returns   {AuthLoginService} Instanta a serviciului de autentificare ales
- */
-function createAuthLoginPlugin(auth0: Auth0VueClient): AuthLoginService {
-  return new AuthSPAService(auth0)
 }
 
 export { AuthSPAService, JARJWTLogin, createAuthLoginPlugin }

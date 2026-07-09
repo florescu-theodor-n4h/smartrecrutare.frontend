@@ -1,7 +1,7 @@
 import type { Auth0VueClient } from '@auth0/auth0-vue'
 import { createAuthLoginPlugin } from './auth_auth0'
 import { AuthLoginKey, AuthLoginService, useAuthLoginPlugin } from './auth.contract'
-import { authBanner, authError, authLog, authWarn } from './auth-debug'
+import { authBanner, authLog, authWarn } from './auth-debug'
 import { createLocalAuthLoginPlugin } from './server-auth-user-pass'
 
 type AuthMode = 'auth0' | 'local'
@@ -114,13 +114,8 @@ function createAuthLoginService({
     return createLocalAuthLoginPlugin()
   }
 
-  if (!auth0Client) {
-    authError('Auth0 mode selected but Auth0 client was not provided')
-    throw new Error('Auth0 client is required when preferred auth mode is auth0')
-  }
-
-  authLog('Creating Auth0 auth login plugin')
-  return createAuthLoginPlugin(auth0Client)
+  authLog('Creating auth login plugin for auth0 mode')
+  return createAuthLoginPlugin(auth0Client, config)
 }
 
 export type { AuthEnvironmentConfig, AuthMode, CreateAuthLoginServiceArgs }

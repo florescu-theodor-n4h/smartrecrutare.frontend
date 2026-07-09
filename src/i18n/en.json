@@ -30,6 +30,20 @@
     "loading": "Loading...",
     "error": "An error occurred"
   },
+  "authPill": {
+    "login": "Sign in",
+    "logout": "Logout",
+    "local": {
+      "open": "Local sign in",
+      "title": "Local account sign in",
+      "subtitle": "Enter your username and password to continue.",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign in",
+      "validation": "Username and password are required.",
+      "loginFailed": "Local login failed. Verify credentials and try again."
+    }
+  },
   "chatbot": {
     "title": "GPT Robot",
     "conversations": "Conversations",
@@ -54,6 +68,8 @@
     "empty": "No notifications",
     "refresh": "Refresh",
     "markRead": "Mark read",
+    "loadFailed": "Could not load notifications",
+    "updateFailed": "Could not update notification state",
     "fallbackMessage": "New notification"
   },
   "statistics": {
@@ -86,8 +102,12 @@
       "ro": "Romanian"
     },
     "contactTitle": "Contact",
-    "contactValue": "support@smartrecruit.example",
-    "rights": "© {year} SmartRecruit. All rights reserved."
+    "contactValue": "support a smartrecruit.example",
+    "rights": "© {year} SmartRecruit. All rights reserved.",
+    "pages": {
+      "kicker": "Formal Product Notice",
+      "noticeTitle": "Important Notice"
+    }
   },
   "footerPages": {
     "terms": {

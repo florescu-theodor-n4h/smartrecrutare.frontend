@@ -30,6 +30,20 @@
     "loading": "Se încarcă...",
     "error": "A apărut o eroare"
   },
+  "authPill": {
+    "login": "Autentificare",
+    "logout": "Deconectare",
+    "local": {
+      "open": "Autentificare locală",
+      "title": "Autentificare cont local",
+      "subtitle": "Introdu utilizatorul si parola pentru a continua.",
+      "username": "Utilizator",
+      "password": "Parola",
+      "submit": "Intra",
+      "validation": "Utilizatorul si parola sunt obligatorii.",
+      "loginFailed": "Autentificarea locala a esuat. Verifica datele si incearca din nou."
+    }
+  },
   "chatbot": {
     "title": "Robot GPT",
     "conversations": "Conversații",
@@ -54,6 +68,8 @@
     "empty": "Nu există notificări",
     "refresh": "Reîncarcă",
     "markRead": "Marchează citită",
+    "loadFailed": "Notificarile nu au putut fi incarcate",
+    "updateFailed": "Starea notificarii nu a putut fi actualizata",
     "fallbackMessage": "Notificare nouă"
   },
   "statistics": {
@@ -86,8 +102,12 @@
       "ro": "Română"
     },
     "contactTitle": "Contact",
-    "contactValue": "support@smartrecruit.example",
-    "rights": "© {year} SmartRecruit. Toate drepturile rezervate."
+    "contactValue": "support a smartrecruit.example",
+    "rights": "© {year} SmartRecruit. Toate drepturile rezervate.",
+    "pages": {
+      "kicker": "Nota oficiala a produsului",
+      "noticeTitle": "Notificare importanta"
+    }
   },
   "footerPages": {
     "terms": {

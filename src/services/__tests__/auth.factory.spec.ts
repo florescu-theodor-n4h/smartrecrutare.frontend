@@ -109,10 +109,41 @@ describe('auth factory mode behavior', () => {
 
     const { createAuthLoginService } = await import('../auth')
     const auth0Client = createAuth0ClientStub()
+    const config: AuthEnvironmentConfig = { VITE_PREFERRED_AUTH: 'auth0' }
 
-    createAuthLoginService({ auth0Client, config: { VITE_PREFERRED_AUTH: 'auth0' } })
+    createAuthLoginService({ auth0Client, config })
 
-    expect(auth0Factory).toHaveBeenCalledWith(auth0Client)
+    expect(auth0Factory).toHaveBeenCalledWith(auth0Client, config)
+    expect(localFactory).not.toHaveBeenCalled()
+  })
+
+  it('allows jar login selection to skip Auth0 client creation', async () => {
+    const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+
+    vi.doMock('../auth_auth0', () => ({
+      createAuthLoginPlugin: auth0Factory,
+    }))
+    vi.doMock('../server-auth-user-pass', () => ({
+      createLocalAuthLoginPlugin: localFactory,
+    }))
+
+    const { createAuthLoginService } = await import('../auth')
+
+    expect(
+      createAuthLoginService({
+        config: {
+          VITE_PREFERRED_AUTH: 'auth0',
+          VITE_USE_JAR_JWT_LOGIN: 'true',
+        },
+      }),
+    ).toBeInstanceOf(FakeAuthService)
+
+    expect(auth0Factory).toHaveBeenCalledTimes(1)
+    expect(auth0Factory).toHaveBeenCalledWith(undefined, {
+      VITE_PREFERRED_AUTH: 'auth0',
+      VITE_USE_JAR_JWT_LOGIN: 'true',
+    })
     expect(localFactory).not.toHaveBeenCalled()
   })
 
