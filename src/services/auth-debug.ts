@@ -1,4 +1,4 @@
-type LogLevel = 'log' | 'warn' | 'error'
+type LogLevel = 'log' | 'warn' | 'error' | 'info'
 
 function toRecord(value: unknown): Record<string, unknown> | undefined {
   if (!value || typeof value !== 'object') {
@@ -13,14 +13,21 @@ function safeConsoleWrite(level: LogLevel, message: string, details?: unknown): 
     const timestamp = new Date().toISOString()
     const prefix = '[AUTH-TRACE]'
     const header = `${prefix} ${timestamp} ${message}`
-    const consoleTarget =
-      typeof console === 'undefined'
-        ? undefined
-        : level === 'warn'
-          ? console.warn || console.log
-          : level === 'error'
-            ? console.error || console.log
-            : console.log
+    // refactor no ? operator
+    let consoleTarget: (message?: unknown, ...optionalParams: unknown[]) => void = console.log
+    switch (level) {
+      case 'warn':
+        consoleTarget = console.warn || console.log
+        break
+      case 'error':
+        consoleTarget = console.error || console.log
+        break
+      case 'info':
+        consoleTarget = console.info || console.log
+        break
+      default:
+        consoleTarget = console.log
+    }
 
     if (!consoleTarget) {
       return
@@ -54,9 +61,9 @@ function safeConsoleWrite(level: LogLevel, message: string, details?: unknown): 
 }
 
 function authBanner(message: string, details?: unknown): void {
-  safeConsoleWrite('error', '============================================================')
-  safeConsoleWrite('error', `AUTH EVENT: ${message}`, details)
-  safeConsoleWrite('error', '============================================================')
+  safeConsoleWrite('log', '============================================================')
+  safeConsoleWrite('log', `AUTH EVENT: ${message}`, details)
+  safeConsoleWrite('log', '============================================================')
 }
 
 function authLog(message: string, details?: unknown): void {
@@ -71,4 +78,8 @@ function authError(message: string, details?: unknown): void {
   safeConsoleWrite('error', message, details)
 }
 
-export { authBanner, authError, authLog, authWarn }
+function authInfo(message: string, details?: unknown): void {
+  safeConsoleWrite('info', message, details)
+}
+
+export { authBanner, authError, authInfo, authLog, authWarn }
