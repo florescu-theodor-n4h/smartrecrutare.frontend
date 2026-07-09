@@ -20,6 +20,7 @@ import {
 } from './services/auth'
 import { authBanner, authLog, authWarn } from './services/auth-debug'
 import { normalizeAuth0Domain } from './services/auth-utils'
+import { useAuthSessionStore } from './stores/auth.store'
 
 //import { piniaThemePlugin } from './plugins/pinia-theme.plugin'
 
@@ -70,6 +71,14 @@ authLog('Auth login plugin created and ready for installation')
 
 //pinia.use(piniaThemePlugin)
 app.use(pinia)
+
+/*
+ * Rehidrateaza starea de autentificare din cookie-ul persistent
+ * inainte ca restul aplicatiei sa se monteze, astfel incat starea
+ * este disponibila la primul render.
+ */
+useAuthSessionStore().hydrate()
+
 app.use(router)
 app.use(i18n)
 app.use(authLoginPlugin)
