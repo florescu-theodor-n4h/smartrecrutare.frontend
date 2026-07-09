@@ -263,7 +263,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAuthEnvironmentConfig, getPreferredAuthMode } from '@/services/auth'
 import { AuthLoginService, useAuthLoginPlugin } from '@/services/auth.contract'
@@ -385,6 +385,17 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('keydown', onEscapeKey)
+})
+
+/*
+ * Inchide automat modalul cand autentificarea devine activa.
+ * Acopera cazurile in care plugin-ul actualizeaza starea asincron
+ * dupa rezolvarea promisiunii loginWithRedirect.
+ */
+watch(isAuthenticated, (authenticated) => {
+  if (authenticated && showLoginModal.value) {
+    closeLoginModal()
+  }
 })
 
 async function submitSsoLogin(): Promise<void> {
