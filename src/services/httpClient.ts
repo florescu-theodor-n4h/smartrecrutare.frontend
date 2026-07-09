@@ -12,7 +12,7 @@ function normalizeBaseUrl(value?: string): string {
   }
 
   // Safe fallback for local development when env files are missing.
-  return 'http://localhost:8080'
+  return 'http://invalid.example:8080'
 }
 
 const API_BASE_URL = normalizeBaseUrl(rawHost)
