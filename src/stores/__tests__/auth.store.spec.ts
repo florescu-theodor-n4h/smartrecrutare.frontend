@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 
 /* --- mock serviciu cookies --- */
 vi.mock('../../services/cookie.service', () => ({
   serviciuCookies: {
-    get: vi.fn(),
-    set: vi.fn(),
+    get: vi.fn<(...args: unknown[]) => unknown>(),
+    set: vi.fn<(...args: unknown[]) => unknown>(),
   },
 }))
 
@@ -26,7 +26,7 @@ function buildSnapshot(overrides: Record<string, unknown> = {}): string {
   })
 }
 
-describe('useAuthSessionStore — persistenta cookie', () => {
+describe('useAuthSessionStore â€” persistenta cookie', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.resetAllMocks()

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import StatisticsView from '../StatisticsView.vue'
@@ -7,15 +7,15 @@ import i18n from '../../i18n'
 /* --- mock-uri servicii --- */
 vi.mock('../../services/analyticsApi', () => ({
   analyticsApi: {
-    getDashboard: vi.fn(),
-    listMatches: vi.fn(),
-    listRuns: vi.fn(),
+    getDashboard: vi.fn<(...args: unknown[]) => unknown>(),
+    listMatches: vi.fn<(...args: unknown[]) => unknown>(),
+    listRuns: vi.fn<(...args: unknown[]) => unknown>(),
   },
 }))
 
 vi.mock('../../services/employersApi', () => ({
   employersApi: {
-    listEmployers: vi.fn(),
+    listEmployers: vi.fn<(...args: unknown[]) => unknown>(),
   },
 }))
 

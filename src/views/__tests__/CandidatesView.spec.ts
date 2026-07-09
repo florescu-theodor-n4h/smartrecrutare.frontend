@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+﻿import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import CandidatesView from '../CandidatesView.vue'
 import i18n from '../../i18n'
 
 vi.mock('../../services/api', () => ({
   default: {
-    getCandidates: vi.fn(() =>
+    getCandidates: vi.fn<(...args: unknown[]) => unknown>(() =>
       Promise.resolve({ data: [{ id: 1, name: 'Ana', email: 'ana@example.com' }] }),
     ),
-    createCandidate: vi.fn(() => Promise.resolve({})),
-    updateCandidate: vi.fn(() => Promise.resolve({})),
-    deleteCandidate: vi.fn(() => Promise.resolve({})),
+    createCandidate: vi.fn<(...args: unknown[]) => unknown>(() => Promise.resolve({})),
+    updateCandidate: vi.fn<(...args: unknown[]) => unknown>(() => Promise.resolve({})),
+    deleteCandidate: vi.fn<(...args: unknown[]) => unknown>(() => Promise.resolve({})),
   },
 }))
 

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, type Ref } from 'vue'
 import type { Auth0VueClient } from '@auth0/auth0-vue'
 import { AuthLoginService, type AuthEnvironmentConfig } from '../auth'
@@ -99,7 +99,7 @@ describe('auth factory mode behavior', () => {
   it('uses Auth0 factory in auth0 mode', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
-    const registerAuth0Client = vi.fn()
+    const registerAuth0Client = vi.fn<(...args: unknown[]) => unknown>()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
@@ -123,7 +123,7 @@ describe('auth factory mode behavior', () => {
   it('allows jar login selection to skip Auth0 client creation', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
-    const registerAuth0Client = vi.fn()
+    const registerAuth0Client = vi.fn<(...args: unknown[]) => unknown>()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
@@ -155,7 +155,7 @@ describe('auth factory mode behavior', () => {
   it('uses local factory in local mode', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
-    const registerAuth0Client = vi.fn()
+    const registerAuth0Client = vi.fn<(...args: unknown[]) => unknown>()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
@@ -176,7 +176,7 @@ describe('auth factory mode behavior', () => {
   it('does not create Auth0 plugin in local mode', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
-    const registerAuth0Client = vi.fn()
+    const registerAuth0Client = vi.fn<(...args: unknown[]) => unknown>()
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,

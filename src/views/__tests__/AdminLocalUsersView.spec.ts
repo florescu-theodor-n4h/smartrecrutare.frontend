@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import AdminLocalUsersView from '../AdminLocalUsersView.vue'
@@ -7,14 +7,14 @@ import i18n from '../../i18n'
 /* --- mock serviciu utilizatori locali --- */
 vi.mock('../../services/localUsersApi', () => ({
   localUsersApi: {
-    listLocalUsers: vi.fn(),
-    createLocalUser: vi.fn(),
-    getLocalUser: vi.fn(),
-    updateLocalUser: vi.fn(),
-    updateLocalUserRoles: vi.fn(),
-    updateLocalUserPassword: vi.fn(),
-    assignManagedEmployer: vi.fn(),
-    unassignManagedEmployer: vi.fn(),
+    listLocalUsers: vi.fn<(...args: unknown[]) => unknown>(),
+    createLocalUser: vi.fn<(...args: unknown[]) => unknown>(),
+    getLocalUser: vi.fn<(...args: unknown[]) => unknown>(),
+    updateLocalUser: vi.fn<(...args: unknown[]) => unknown>(),
+    updateLocalUserRoles: vi.fn<(...args: unknown[]) => unknown>(),
+    updateLocalUserPassword: vi.fn<(...args: unknown[]) => unknown>(),
+    assignManagedEmployer: vi.fn<(...args: unknown[]) => unknown>(),
+    unassignManagedEmployer: vi.fn<(...args: unknown[]) => unknown>(),
   },
 }))
 

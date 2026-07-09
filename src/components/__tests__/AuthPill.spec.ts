@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick, ref, type Ref } from 'vue'
 import AuthPill from '../AuthPill.vue'
 import i18n from '../../i18n'
 import { AuthLoginKey } from '@/services/auth.contract'
 
-const mockGetAuthEnvironmentConfig = vi.fn()
-const mockGetPreferredAuthMode = vi.fn()
-const mockCreateLocalAuthLoginPlugin = vi.fn()
-const mockCreateSecondaryAuth0LoginService = vi.fn()
+const mockGetAuthEnvironmentConfig = vi.fn<(...args: unknown[]) => unknown>()
+const mockGetPreferredAuthMode = vi.fn<(...args: unknown[]) => unknown>()
+const mockCreateLocalAuthLoginPlugin = vi.fn<(...args: unknown[]) => unknown>()
+const mockCreateSecondaryAuth0LoginService = vi.fn<(...args: unknown[]) => unknown>()
 
 vi.mock('@/services/auth', () => ({
   getAuthEnvironmentConfig: (...args: unknown[]) => mockGetAuthEnvironmentConfig(...args),
@@ -38,15 +38,15 @@ type AuthServiceMock = {
 function createAuthServiceMock(): AuthServiceMock {
   return {
     isAuthenticated: ref(false),
-    loginWithRedirect: vi.fn().mockResolvedValue(undefined),
-    logout: vi.fn().mockResolvedValue(undefined),
-    register: vi.fn().mockResolvedValue(undefined),
-    checkAuth: vi.fn().mockResolvedValue(undefined),
-    setSavingUserIntention: vi.fn(),
-    saveLoginStatus: vi.fn(),
-    isLocalPiniaSaveable: vi.fn().mockReturnValue(true),
+    loginWithRedirect: vi.fn<(...args: unknown[]) => unknown>().mockResolvedValue(undefined),
+    logout: vi.fn<(...args: unknown[]) => unknown>().mockResolvedValue(undefined),
+    register: vi.fn<(...args: unknown[]) => unknown>().mockResolvedValue(undefined),
+    checkAuth: vi.fn<(...args: unknown[]) => unknown>().mockResolvedValue(undefined),
+    setSavingUserIntention: vi.fn<(...args: unknown[]) => unknown>(),
+    saveLoginStatus: vi.fn<(...args: unknown[]) => unknown>(),
+    isLocalPiniaSaveable: vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(true),
     getDisclaimer: vi
-      .fn()
+      .fn<() => string>()
       .mockReturnValue(
         'Local auth can persist your session in a browser cookie-backed Pinia store.',
       ),
