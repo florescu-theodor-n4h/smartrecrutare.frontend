@@ -4,6 +4,7 @@
     "dashboard": "Dashboard",
     "jobs": "Jobs",
     "candidates": "Candidates",
+    "statistics": "Statistics",
     "settings": "Settings",
     "chatbot": "Chatbot"
   },
@@ -54,5 +55,32 @@
     "refresh": "Refresh",
     "markRead": "Mark read",
     "fallbackMessage": "New notification"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "subtitle": "Operational snapshot built from analytics endpoints",
+    "refresh": "Refresh",
+    "loadError": "Could not load statistics",
+    "cards": {
+      "matches": "Matches",
+      "runs": "Analytics Runs",
+      "jobs": "Jobs",
+      "candidates": "Candidates"
+    }
+  },
+  "footer": {
+    "companyTitle": "Company",
+    "companyDescription": "SmartRecruit helps teams manage jobs, candidates and hiring workflows.",
+    "legalTitle": "Legal",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "resourcesTitle": "Resources",
+    "apiStatus": "API status and integrations",
+    "support": "Support and help center",
+    "roadmap": "Product roadmap",
+    "contactTitle": "Contact",
+    "contactValue": "support@smartrecruit.example",
+    "rights": "© {year} SmartRecruit. All rights reserved."
   }
 }

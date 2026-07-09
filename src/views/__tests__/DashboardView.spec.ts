@@ -1,7 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { ref } from 'vue'
 import DashboardView from '../DashboardView.vue'
 import i18n from '../../i18n'
+
+vi.mock('@auth0/auth0-vue', () => ({
+  useAuth0: () => ({
+    user: ref({
+      name: 'Test User',
+      email: 'test@example.com',
+      picture: 'https://example.com/avatar.png',
+    }),
+    isAuthenticated: ref(true),
+    isLoading: ref(false),
+  }),
+}))
 
 vi.mock('../../services/api', () => ({
   default: {

@@ -56,6 +56,29 @@ describe('auth factory mode behavior', () => {
     expect(getPreferredAuthMode(config)).toBe('local')
   })
 
+  it('builds auth config from env-like source in one place', async () => {
+    const { getAuthEnvironmentConfig } = await import('../auth')
+    const config = getAuthEnvironmentConfig({
+      VITE_PREFERRED_AUTH: 'local',
+      VITE_PREFFERRED_AUTH: 'auth0',
+      VITE_PREFERRED_LOGIN: 'local',
+      VITE_DISABLE_LOCAL_LOGIN: 'false',
+      VITE_REQUIRE_PAR: 'true',
+      VITE_REQUIRE_JAR: 'false',
+      VITE_USE_JAR_JWT_LOGIN: 'false',
+    })
+
+    expect(config).toEqual({
+      VITE_PREFERRED_AUTH: 'local',
+      VITE_PREFFERRED_AUTH: 'auth0',
+      VITE_PREFERRED_LOGIN: 'local',
+      VITE_DISABLE_LOCAL_LOGIN: 'false',
+      VITE_REQUIRE_PAR: 'true',
+      VITE_REQUIRE_JAR: 'false',
+      VITE_USE_JAR_JWT_LOGIN: 'false',
+    })
+  })
+
   it('uses Auth0 factory in auth0 mode', async () => {
     const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
     const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())

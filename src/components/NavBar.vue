@@ -5,6 +5,7 @@
       <RouterLink to="/dashboard">{{ $t('nav.dashboard') }}</RouterLink>
       <RouterLink to="/jobs">{{ $t('nav.jobs') }}</RouterLink>
       <RouterLink to="/candidates">{{ $t('nav.candidates') }}</RouterLink>
+      <RouterLink to="/statistics">{{ $t('nav.statistics') }}</RouterLink>
       <RouterLink to="/chatbot">{{ $t('nav.chatbot') }}</RouterLink>
     </nav>
     <div class="actions">

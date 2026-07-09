@@ -15,24 +15,17 @@ import auth0Config from './auth0.config'
 import { Auth0Plugin, createAuth0, type Auth0VueClient } from '@auth0/auth0-vue'
 import {
   createAuthLoginService,
+  getAuthEnvironmentConfig,
   getPreferredAuthMode,
-  type AuthEnvironmentConfig,
 } from './services/auth'
+import { normalizeAuth0Domain } from './services/auth-utils'
 
 //import { piniaThemePlugin } from './plugins/pinia-theme.plugin'
 
 const app = createApp(App)
 const pinia = createPinia()
 
-const authConfig: AuthEnvironmentConfig = {
-  VITE_PREFERRED_AUTH: import.meta.env.VITE_PREFERRED_AUTH,
-  VITE_PREFFERRED_AUTH: import.meta.env.VITE_PREFFERRED_AUTH,
-  VITE_PREFERRED_LOGIN: import.meta.env.VITE_PREFERRED_LOGIN,
-  VITE_DISABLE_LOCAL_LOGIN: import.meta.env.VITE_DISABLE_LOCAL_LOGIN,
-  VITE_REQUIRE_PAR: import.meta.env.VITE_REQUIRE_PAR,
-  VITE_REQUIRE_JAR: import.meta.env.VITE_REQUIRE_JAR,
-  VITE_USE_JAR_JWT_LOGIN: import.meta.env.VITE_USE_JAR_JWT_LOGIN,
-}
+const authConfig = getAuthEnvironmentConfig(import.meta.env)
 
 const authMode = getPreferredAuthMode(authConfig)
 
@@ -40,7 +33,7 @@ let auth0Client: Auth0VueClient | undefined
 
 if (authMode === 'auth0') {
   const auth0: Auth0Plugin = createAuth0({
-    domain: auth0Config.domain,
+    domain: normalizeAuth0Domain(auth0Config.domain),
     clientId: auth0Config.clientId,
     authorizationParams: auth0Config.authorizationParams,
   })

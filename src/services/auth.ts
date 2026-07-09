@@ -20,12 +20,47 @@ type CreateAuthLoginServiceArgs = {
   config: AuthEnvironmentConfig
 }
 
+type AuthEnvironmentSource = {
+  VITE_PREFERRED_AUTH?: unknown
+  VITE_PREFFERRED_AUTH?: unknown
+  VITE_PREFERRED_LOGIN?: unknown
+  VITE_DISABLE_LOCAL_LOGIN?: unknown
+  VITE_REQUIRE_PAR?: unknown
+  VITE_REQUIRE_JAR?: unknown
+  VITE_USE_JAR_JWT_LOGIN?: unknown
+}
+
+function readString(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+
+  const normalized = value.replace(/\s+#.*$/, '').trim()
+  return normalized.length > 0 ? normalized : undefined
+}
+
+function getAuthEnvironmentConfig(source: AuthEnvironmentSource): AuthEnvironmentConfig {
+  return {
+    VITE_PREFERRED_AUTH: readString(source.VITE_PREFERRED_AUTH),
+    VITE_PREFFERRED_AUTH: readString(source.VITE_PREFFERRED_AUTH),
+    VITE_PREFERRED_LOGIN: readString(source.VITE_PREFERRED_LOGIN),
+    VITE_DISABLE_LOCAL_LOGIN: readString(source.VITE_DISABLE_LOCAL_LOGIN),
+    VITE_REQUIRE_PAR: readString(source.VITE_REQUIRE_PAR),
+    VITE_REQUIRE_JAR: readString(source.VITE_REQUIRE_JAR),
+    VITE_USE_JAR_JWT_LOGIN: readString(source.VITE_USE_JAR_JWT_LOGIN),
+  }
+}
+
+function sanitizeEnvValue(value?: string): string {
+  return (value || '').replace(/\s+#.*$/, '').trim().toLowerCase()
+}
+
 function isTrueFlag(value?: string): boolean {
-  return (value || '').trim().toLowerCase() === 'true'
+  return sanitizeEnvValue(value) === 'true'
 }
 
 function normalizeAuthMode(value?: string): AuthMode | null {
-  const normalized = (value || '').trim().toLowerCase()
+  const normalized = sanitizeEnvValue(value)
 
   if (normalized === 'auth0') {
     return 'auth0'
@@ -39,8 +74,12 @@ function normalizeAuthMode(value?: string): AuthMode | null {
 }
 
 function getPreferredAuthMode(config: AuthEnvironmentConfig): AuthMode {
+  const primaryPreferred = normalizeAuthMode(config.VITE_PREFERRED_AUTH)
+  if (primaryPreferred) {
+    return primaryPreferred
+  }
+
   const explicitPreferred =
-    normalizeAuthMode(config.VITE_PREFERRED_AUTH) ||
     normalizeAuthMode(config.VITE_PREFFERRED_AUTH) ||
     normalizeAuthMode(config.VITE_PREFERRED_LOGIN)
 
@@ -75,6 +114,7 @@ export {
   AuthLoginKey,
   AuthLoginService,
   createAuthLoginService,
+  getAuthEnvironmentConfig,
   getPreferredAuthMode,
   useAuthLoginPlugin,
 }

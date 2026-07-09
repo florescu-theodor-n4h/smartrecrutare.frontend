@@ -26,10 +26,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import api from '../services/api'
-import { useAuth0 } from '@auth0/auth0-vue'
-const { user, isAuthenticated, isLoading } = useAuth0()
+import { useAuth0, type User } from '@auth0/auth0-vue'
+import { AuthLoginKey, type AuthLoginService } from '@/services/auth.contract'
+import { getAuthEnvironmentConfig, getPreferredAuthMode } from '@/services/auth'
+
+const authConfig = getAuthEnvironmentConfig(import.meta.env)
+const authMode = getPreferredAuthMode(authConfig)
+const authLoginPlugin = inject<AuthLoginService | null>(AuthLoginKey, null)
+const auth0 = authMode === 'auth0' ? useAuth0() : null
+
+const user = computed<User | undefined>(() => auth0?.user.value)
+const isAuthenticated = computed<boolean>(
+  () => auth0?.isAuthenticated.value ?? authLoginPlugin?.isAuthenticated.value ?? false,
+)
+const isLoading = computed<boolean>(() => auth0?.isLoading.value ?? false)
 
 const statsOverview = ref('')
 const openJobs = ref(0)

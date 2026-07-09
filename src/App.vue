@@ -43,6 +43,34 @@ import ChatbotAndroidWidget from '@/components/ChatbotAndroidWidget.vue'
       </main>
     </div>
 
+    <footer class="legal-footer">
+      <section>
+        <h4>{{ $t('footer.companyTitle') }}</h4>
+        <p>{{ $t('footer.companyDescription') }}</p>
+      </section>
+      <section>
+        <h4>{{ $t('footer.legalTitle') }}</h4>
+        <ul>
+          <li>{{ $t('footer.terms') }}</li>
+          <li>{{ $t('footer.privacy') }}</li>
+          <li>{{ $t('footer.cookies') }}</li>
+        </ul>
+      </section>
+      <section>
+        <h4>{{ $t('footer.resourcesTitle') }}</h4>
+        <ul>
+          <li>{{ $t('footer.apiStatus') }}</li>
+          <li>{{ $t('footer.support') }}</li>
+          <li>{{ $t('footer.roadmap') }}</li>
+        </ul>
+      </section>
+      <section>
+        <h4>{{ $t('footer.contactTitle') }}</h4>
+        <p>{{ $t('footer.contactValue') }}</p>
+        <small>{{ $t('footer.rights', { year: new Date().getFullYear() }) }}</small>
+      </section>
+    </footer>
+
     <ChatbotAndroidWidget label="Open chatbot" />
     <ApiStatusBar />
   </div>
@@ -103,6 +131,39 @@ nav a:first-of-type {
 
     padding: 1rem 0;
     margin-top: 1rem;
+  }
+}
+
+.legal-footer {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  border-top: 1px solid var(--color-border);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.legal-footer h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.legal-footer p,
+.legal-footer li,
+.legal-footer small {
+  color: var(--color-text);
+  opacity: 0.85;
+  font-size: 0.875rem;
+}
+
+.legal-footer ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+@media (max-width: 860px) {
+  .legal-footer {
+    grid-template-columns: 1fr;
   }
 }
 </style>

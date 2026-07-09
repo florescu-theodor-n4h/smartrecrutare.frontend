@@ -4,6 +4,7 @@
     "dashboard": "Tablou de bord",
     "jobs": "Posturi",
     "candidates": "Candidați",
+    "statistics": "Statistici",
     "settings": "Setări",
     "chatbot": "Chatbot"
   },
@@ -54,5 +55,32 @@
     "refresh": "Reîncarcă",
     "markRead": "Marchează citită",
     "fallbackMessage": "Notificare nouă"
+  },
+  "statistics": {
+    "title": "Statistici",
+    "subtitle": "Instantaneu operațional construit din endpoint-urile de analytics",
+    "refresh": "Reîncarcă",
+    "loadError": "Statisticile nu au putut fi încărcate",
+    "cards": {
+      "matches": "Potriviri",
+      "runs": "Rulări analytics",
+      "jobs": "Posturi",
+      "candidates": "Candidați"
+    }
+  },
+  "footer": {
+    "companyTitle": "Companie",
+    "companyDescription": "SmartRecruit ajută echipele să gestioneze posturi, candidați și fluxuri de recrutare.",
+    "legalTitle": "Legal",
+    "terms": "Termeni și condiții",
+    "privacy": "Politica de confidențialitate",
+    "cookies": "Politica de cookies",
+    "resourcesTitle": "Resurse",
+    "apiStatus": "Status API și integrări",
+    "support": "Suport și centru de ajutor",
+    "roadmap": "Roadmap produs",
+    "contactTitle": "Contact",
+    "contactValue": "support@smartrecruit.example",
+    "rights": "© {year} SmartRecruit. Toate drepturile rezervate."
   }
 }

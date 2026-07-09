@@ -1,6 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { authGuard } from '@auth0/auth0-vue'
+import { getAuthEnvironmentConfig, getPreferredAuthMode } from '@/services/auth'
 import HomeView from '../views/HomeView.vue'
+
+const authConfig = getAuthEnvironmentConfig(import.meta.env)
+const authMode = getPreferredAuthMode(authConfig)
+const dashboardAuthGuard = authMode === 'auth0' ? authGuard : undefined
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +19,7 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue'),
-      beforeEnter: authGuard,
+      beforeEnter: dashboardAuthGuard,
     },
     {
       path: '/jobs',
@@ -30,6 +35,11 @@ const router = createRouter({
       path: '/chatbot',
       name: 'chatbot',
       component: () => import('../views/ChatbotView.vue'),
+    },
+    {
+      path: '/statistics',
+      name: 'statistics',
+      component: () => import('../views/StatisticsView.vue'),
     },
     {
       path: '/about',
