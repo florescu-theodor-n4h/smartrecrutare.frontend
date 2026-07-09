@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { ref, type Ref } from 'vue'
+import { nextTick, ref, type Ref } from 'vue'
 import AuthPill from '../AuthPill.vue'
 import i18n from '../../i18n'
 import { AuthLoginKey } from '@/services/auth.contract'
@@ -150,6 +150,51 @@ describe('AuthPill', () => {
     expect(clearButton).toBeDefined()
 
     await clearButton!.trigger('click')
+    expect((wrapper.find('#local-login-username').element as HTMLInputElement).value).toBe('')
+    expect((wrapper.find('#local-login-password').element as HTMLInputElement).value).toBe('')
+  })
+
+  /**
+   * Verifica ca modalul se inchide automat cand isAuthenticated devine true.
+   * Acopera cazul in care plugin-ul seteaza starea asincron dupa login.
+   */
+  it('local mode: inchide automat modalul cand isAuthenticated devine true', async () => {
+    mockGetAuthEnvironmentConfig.mockReturnValue({ VITE_DISABLE_LOCAL_LOGIN: 'false' })
+    mockGetPreferredAuthMode.mockReturnValue('local')
+
+    const masterAuthPlugin = createAuthServiceMock()
+    const wrapper = mountAuthPill(masterAuthPlugin)
+
+    await wrapper.find('.auth-pill.login').trigger('click')
+    expect(wrapper.find('.local-login-modal').exists()).toBe(true)
+
+    masterAuthPlugin.isAuthenticated.value = true
+    await nextTick()
+
+    expect(wrapper.find('.local-login-modal').exists()).toBe(false)
+  })
+
+  /**
+   * Verifica ca formularele sunt curatate dupa inchiderea modala.
+   * Garanteaza ca datele sensibile nu persista in stare dupa logout/close.
+   */
+  it('local mode: curata formularele dupa inchiderea modala', async () => {
+    mockGetAuthEnvironmentConfig.mockReturnValue({ VITE_DISABLE_LOCAL_LOGIN: 'false' })
+    mockGetPreferredAuthMode.mockReturnValue('local')
+
+    const masterAuthPlugin = createAuthServiceMock()
+    const wrapper = mountAuthPill(masterAuthPlugin)
+
+    await wrapper.find('.auth-pill.login').trigger('click')
+    await wrapper.find('#local-login-username').setValue('test.user')
+    await wrapper.find('#local-login-password').setValue('parola-test')
+
+    await wrapper.find('.modal-close').trigger('click')
+    await nextTick()
+
+    expect(wrapper.find('.local-login-modal').exists()).toBe(false)
+
+    await wrapper.find('.auth-pill.login').trigger('click')
     expect((wrapper.find('#local-login-username').element as HTMLInputElement).value).toBe('')
     expect((wrapper.find('#local-login-password').element as HTMLInputElement).value).toBe('')
   })
