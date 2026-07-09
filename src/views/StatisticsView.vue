@@ -28,6 +28,10 @@
         <h2>{{ $t('statistics.cards.candidates') }}</h2>
         <p>{{ dashboardCandidates }}</p>
       </article>
+      <article class="card">
+        <h2>{{ $t('statistics.cards.employers') }}</h2>
+        <p>{{ employersCount }}</p>
+      </article>
     </div>
   </section>
 </template>
@@ -36,6 +40,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { analyticsApi, type AnalyticsDashboard } from '@/services/analyticsApi'
+import { employersApi } from '@/services/employersApi'
 
 const { t } = useI18n()
 
@@ -44,6 +49,7 @@ const error = ref('')
 const dashboard = ref<AnalyticsDashboard>({})
 const matchesCount = ref(0)
 const runsCount = ref(0)
+const employersCount = ref(0)
 
 function readCountFromPageLike(data: unknown): number {
   if (!data || typeof data !== 'object') {
@@ -96,15 +102,17 @@ async function loadStatistics(): Promise<void> {
   error.value = ''
 
   try {
-    const [dashboardRes, matchesRes, runsRes] = await Promise.all([
+    const [dashboardRes, matchesRes, runsRes, employersRes] = await Promise.all([
       analyticsApi.getDashboard(),
       analyticsApi.listMatches(),
       analyticsApi.listRuns(),
+      employersApi.listEmployers(),
     ])
 
     dashboard.value = dashboardRes.data
     matchesCount.value = readCountFromPageLike(matchesRes.data)
     runsCount.value = readCountFromPageLike(runsRes.data)
+    employersCount.value = readCountFromPageLike(employersRes.data)
   } catch {
     error.value = t('statistics.loadError')
   } finally {
@@ -119,28 +127,54 @@ onMounted(() => {
 
 <style scoped>
 .statistics-page {
-  display: grid;
-  gap: 1rem;
+  padding: 1rem;
 }
 
 .statistics-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.statistics-header h1 {
+  margin: 0 0 0.2rem;
+}
+
+.statistics-header p {
+  margin: 0;
+  font-size: 0.88rem;
+  opacity: 0.65;
 }
 
 .refresh {
+  flex-shrink: 0;
   border: 1px solid #d1d5db;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #f9fafb;
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.85rem;
   cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.refresh:hover {
+  background: #e5e7eb;
+}
+
+.info {
+  color: #6b7280;
+  margin: 0.5rem 0;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 0.5rem 0;
 }
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 0.75rem;
 }
 
@@ -148,26 +182,27 @@ onMounted(() => {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 1rem;
-  background: #fff;
+  background: var(--card-bg, #fff);
+}
+
+.card h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
 }
 
 .card p {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
-}
-
-.info {
-  color: #6b7280;
-}
-
-.error {
-  color: #b91c1c;
 }
 
 @media (max-width: 860px) {
   .cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 </style>

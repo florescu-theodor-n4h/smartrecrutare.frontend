@@ -28,3 +28,8 @@ Translations
 API
 
 See `docs/api-integration.md` for endpoint descriptions and sample payloads.
+
+Navigation and admin
+
+- `docs/settings-hamburger-menu.md` explains the settings hamburger entry point.
+- `docs/admin-local-users.md` documents the local user administration page.

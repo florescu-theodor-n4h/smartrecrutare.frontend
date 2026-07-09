@@ -1,20 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { ref } from 'vue'
 import DashboardView from '../DashboardView.vue'
 import i18n from '../../i18n'
-
-vi.mock('@auth0/auth0-vue', () => ({
-  useAuth0: () => ({
-    user: ref({
-      name: 'Test User',
-      email: 'test@example.com',
-      picture: 'https://example.com/avatar.png',
-    }),
-    isAuthenticated: ref(true),
-    isLoading: ref(false),
-  }),
-}))
 
 vi.mock('../../services/api', () => ({
   default: {
@@ -26,9 +13,20 @@ vi.mock('../../services/api', () => ({
 describe('DashboardView', () => {
   beforeEach(() => vi.resetAllMocks())
 
-  it('shows basic stats', async () => {
+  it('smoke: randeaza cardurile de sumar ale panoului de control', async () => {
     const wrapper = mount(DashboardView, { global: { plugins: [i18n] } })
     await new Promise((r) => setTimeout(r, 0))
+    expect(wrapper.text()).toContain('Overview')
+    expect(wrapper.text()).toContain('Open Jobs')
+    expect(wrapper.text()).toContain('Recent Candidates')
     expect(wrapper.text()).toContain('Data loaded')
+  })
+
+  it('qa: randeaza continut si cand utilizatorul nu este autentificat', async () => {
+    const wrapper = mount(DashboardView, { global: { plugins: [i18n] } })
+    await new Promise((r) => setTimeout(r, 0))
+    expect(wrapper.text()).toContain('Dashboard overview')
+    expect(wrapper.text()).toContain('Dashboard content is loaded for all users')
+    expect(wrapper.text()).toContain('Overview')
   })
 })

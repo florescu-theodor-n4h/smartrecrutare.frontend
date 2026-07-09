@@ -21,6 +21,10 @@ type LocalLoginRequest = {
   password: string
 }
 
+type LocalRegisterRequest = LocalLoginRequest & {
+  email: string
+}
+
 type LocalLoginResponse = {
   tokenType: string
   accessToken: string
@@ -71,6 +75,44 @@ class ServerAuthUserPassLogin extends AuthLoginService {
       localLoginPath: this.config.localLoginPath,
       localMePath: this.config.localMePath,
     })
+    this.saveDisclaimer(
+      'Local auth can persist your session in a browser cookie-backed Pinia store.',
+    )
+  }
+
+  public override getDisclaimer(): string {
+    return 'Local auth can persist your session in a browser cookie-backed Pinia store.'
+  }
+
+  public override isLocalPiniaSaveable(): boolean {
+    return true
+  }
+
+  public override setSavingUserIntention(savingUserIntention: boolean): void {
+    super.setSavingUserIntention(savingUserIntention)
+  }
+
+  public async register(options?: unknown): Promise<void> {
+    authLog('ServerAuthUserPassLogin.register called', {
+      hasOptions: options !== undefined,
+    })
+
+    if (!isLocalRegisterRequest(options)) {
+      authError('ServerAuthUserPassLogin.register missing username/email/password payload')
+      throw new Error('Local registration requires username, email and password')
+    }
+
+    authBanner('ServerAuthUserPassLogin.register accepted registration payload', {
+      username: options.username,
+      email: options.email,
+    })
+
+    await httpClient.post('/auth/local/register', {
+      username: options.username,
+      email: options.email,
+      password: options.password,
+    })
+    this.saveUserIntention('register')
   }
 
   public async loginWithRedirect(options?: unknown): Promise<void> {
@@ -87,6 +129,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
       username: options.username,
     })
     await this.loginWithCredentials(options)
+    this.saveUserIntention('login')
   }
 
   public async loginWithCredentials(credentials: LocalLoginRequest): Promise<void> {
@@ -106,6 +149,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
 
     setHttpAuthBearerToken(normalizedToken)
     this.isAuthenticated.value = true
+    this.saveLoginStatus(true)
     authBanner('ServerAuthUserPassLogin.loginWithCredentials completed', {
       username: credentials.username,
       isAuthenticated: this.isAuthenticated.value,
@@ -127,6 +171,7 @@ class ServerAuthUserPassLogin extends AuthLoginService {
       }
 
       this.isAuthenticated.value = response.data.authenticated ?? Boolean(response.data.user)
+      this.saveLoginStatus(this.isAuthenticated.value)
       authBanner('ServerAuthUserPassLogin.checkAuth completed', {
         isAuthenticated: this.isAuthenticated.value,
       })
@@ -141,8 +186,23 @@ class ServerAuthUserPassLogin extends AuthLoginService {
     authBanner('ServerAuthUserPassLogin.logout called')
     clearHttpAuthBearerToken()
     this.isAuthenticated.value = false
+    this.saveLoginStatus(false)
     authLog('ServerAuthUserPassLogin.logout completed')
   }
+}
+
+function isLocalRegisterRequest(options: unknown): options is LocalRegisterRequest {
+  if (typeof options !== 'object' || options === null) {
+    return false
+  }
+
+  const candidate = options as Partial<LocalRegisterRequest>
+
+  return (
+    typeof candidate.username === 'string' &&
+    typeof candidate.email === 'string' &&
+    typeof candidate.password === 'string'
+  )
 }
 
 function createLocalAuthLoginPlugin(): AuthLoginService {
@@ -155,5 +215,6 @@ export type {
   LocalLoginRequest,
   LocalLoginResponse,
   LocalMeResponse,
+  LocalRegisterRequest,
 }
 export { ServerAuthUserPassLogin, createLocalAuthLoginPlugin }

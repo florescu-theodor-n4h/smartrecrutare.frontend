@@ -4,7 +4,9 @@
     "dashboard": "Tablou de bord",
     "jobs": "Posturi",
     "candidates": "Candidați",
+    "employers": "Angajatori",
     "statistics": "Statistici",
+    "admin": "Admin",
     "settings": "Setări",
     "chatbot": "Chatbot"
   },
@@ -24,6 +26,8 @@
   "candidates": {
     "name": "Nume",
     "email": "Email",
+    "numePrenume": "Nume complet",
+    "mail": "Adresă de email",
     "noData": "Nu s-au găsit candidați"
   },
   "messages": {
@@ -33,15 +37,29 @@
   "authPill": {
     "login": "Autentificare",
     "logout": "Deconectare",
+    "sso": {
+      "tab": "SSO",
+      "description": "Autentifica-te cu un cont extern sau un furnizor SSO.",
+      "button": "Continua cu cont extern"
+    },
     "local": {
       "open": "Autentificare locală",
       "title": "Autentificare cont local",
+      "registerTitle": "Creează un cont local",
       "subtitle": "Introdu utilizatorul si parola pentru a continua.",
+      "tabsLabel": "Acțiuni de autentificare locală",
+      "loginTab": "Autentificare",
+      "registerTab": "Înregistrare",
       "username": "Utilizator",
+      "email": "Email",
       "password": "Parola",
       "submit": "Intra",
+      "registerSubmit": "Înregistrează-te",
       "validation": "Utilizatorul si parola sunt obligatorii.",
-      "loginFailed": "Autentificarea locala a esuat. Verifica datele si incearca din nou."
+      "registerValidation": "Utilizatorul, emailul si parola sunt obligatorii.",
+      "loginFailed": "Autentificarea locala a esuat. Verifica datele si incearca din nou.",
+      "registerFailed": "Înregistrarea locală a eșuat. Verifică datele și încearcă din nou.",
+      "saveSession": "Tine-ma minte pe acest dispozitiv"
     }
   },
   "chatbot": {
@@ -81,8 +99,66 @@
       "matches": "Potriviri",
       "runs": "Rulări analytics",
       "jobs": "Posturi",
-      "candidates": "Candidați"
+      "candidates": "Candidați",
+      "employers": "Angajatori"
     }
+  },
+  "dashboard": {
+    "welcomeBack": "Bun revenit",
+    "guestTitle": "Dashboard overview",
+    "guestSummary": "Dashboard content is loaded for all users, including local auth and guests.",
+    "statusLabel": "Overview",
+    "openJobs": "Posturi disponibile",
+    "recentCandidates": "Candidati recenti",
+    "dataLoaded": "Date incarcate",
+    "dataUnavailable": "Indisponibil"
+  },
+  "admin": {
+    "title": "Administrare utilizatori locali",
+    "subtitle": "Gestioneaza conturile utilizatorilor locali stocati in baza de date",
+    "user": "utilizator",
+    "username": "Utilizator",
+    "email": "Email",
+    "status": "Status",
+    "roles": "Roluri",
+    "lastLogin": "Ultima autentificare",
+    "noData": "Nu s-au gasit utilizatori",
+    "enabled": "Activ",
+    "disabled": "Inactiv",
+    "locked": "Blocat",
+    "password": "Parola",
+    "newPassword": "Parola noua",
+    "passwordMinLengthHint": "Minim 10 caractere",
+    "resetPassword": "Reseteaza parola",
+    "passwordChanged": "Parola a fost schimbata cu succes",
+    "passwordMinLength": "Parola trebuie sa aiba minim 10 caractere",
+    "createValidation": "Utilizatorul, emailul si parola sunt obligatorii",
+    "rolesDescription": "Selecteaza rolurile pentru acest utilizator",
+    "managedEmployersDescription": "Angajatorii gestionati de acest manager",
+    "noManagedEmployers": "Nu exista angajatori atribuiti",
+    "employerIdPlaceholder": "ID angajator",
+    "assignEmployer": "Atribuie",
+    "createdAt": "Creat la",
+    "modifiedAt": "Modificat la",
+    "tabs": {
+      "profile": "Profil",
+      "roles": "Roluri",
+      "password": "Parola",
+      "employers": "Angajatori"
+    }
+  },
+  "employers": {
+    "nume": "Denumire",
+    "denumireLegala": "Denumire legală",
+    "status": "Status",
+    "codFiscal": "Cod fiscal",
+    "website": "Website",
+    "adresa": "Adresă",
+    "emailContact": "Email contact",
+    "telefonContact": "Telefon contact",
+    "noData": "Nu s-au găsit angajatori",
+    "numeRequired": "Denumirea este obligatorie",
+    "confirmDelete": "Ștergi acest angajator?"
   },
   "footer": {
     "companyTitle": "Companie",
@@ -103,13 +179,11 @@
     },
     "contactTitle": "Contact",
     "contactValue": "support a smartrecruit.example",
-    "rights": "© {year} SmartRecruit. Toate drepturile rezervate.",
-    "pages": {
-      "kicker": "Nota oficiala a produsului",
-      "noticeTitle": "Notificare importanta"
-    }
+    "rights": "© {year} SmartRecruit. Toate drepturile rezervate."
   },
   "footerPages": {
+    "kicker": "Notă oficială a produsului",
+    "noticeTitle": "Notificare importantă",
     "terms": {
       "title": "Termeni și condiții",
       "lead": "Prezentele condiții guvernează utilizarea serviciului într-o formă scurtă și tradițională.",

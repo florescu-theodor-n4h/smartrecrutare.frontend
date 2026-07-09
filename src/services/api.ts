@@ -40,10 +40,13 @@ class Job extends AbstractDTOEntity {
   salariu /*este optional, coform Job.java*/?: string
 
   @Field()
+  employerId?: number
+
+  @Field()
   tipContract: TipContract = TipContract.Contract
 
   @Field()
-  activ: boolean = false
+  activ: boolean = true
 }
 
 /**

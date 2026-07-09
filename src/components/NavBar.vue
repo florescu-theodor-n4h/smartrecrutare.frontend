@@ -5,11 +5,13 @@
       <RouterLink to="/dashboard">{{ $t('nav.dashboard') }}</RouterLink>
       <RouterLink to="/jobs">{{ $t('nav.jobs') }}</RouterLink>
       <RouterLink to="/candidates">{{ $t('nav.candidates') }}</RouterLink>
+      <RouterLink to="/employers">{{ $t('nav.employers') }}</RouterLink>
       <RouterLink to="/statistics">{{ $t('nav.statistics') }}</RouterLink>
       <RouterLink to="/chatbot">{{ $t('nav.chatbot') }}</RouterLink>
     </nav>
     <div class="actions">
       <NotificationBell />
+      <SettingsHamburgerMenu />
       <AuthPill />
     </div>
   </div>
@@ -18,6 +20,7 @@
 <script setup lang="ts">
 import AuthPill from './AuthPill.vue'
 import NotificationBell from '@/components/notifications/NotificationBell.vue'
+import SettingsHamburgerMenu from '@/components/SettingsHamburgerMenu.vue'
 </script>
 
 <style scoped>

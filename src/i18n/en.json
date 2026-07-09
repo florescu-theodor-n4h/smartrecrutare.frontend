@@ -4,7 +4,9 @@
     "dashboard": "Dashboard",
     "jobs": "Jobs",
     "candidates": "Candidates",
+    "employers": "Employers",
     "statistics": "Statistics",
+    "admin": "Admin",
     "settings": "Settings",
     "chatbot": "Chatbot"
   },
@@ -24,6 +26,8 @@
   "candidates": {
     "name": "Name",
     "email": "Email",
+    "numePrenume": "Full name",
+    "mail": "Email address",
     "noData": "No candidates found"
   },
   "messages": {
@@ -33,15 +37,29 @@
   "authPill": {
     "login": "Sign in",
     "logout": "Logout",
+    "sso": {
+      "tab": "SSO",
+      "description": "Sign in using an external account or SSO provider.",
+      "button": "Continue with external account"
+    },
     "local": {
       "open": "Local sign in",
       "title": "Local account sign in",
+      "registerTitle": "Create a local account",
       "subtitle": "Enter your username and password to continue.",
+      "tabsLabel": "Local authentication actions",
+      "loginTab": "Sign in",
+      "registerTab": "Register",
       "username": "Username",
+      "email": "Email",
       "password": "Password",
       "submit": "Sign in",
+      "registerSubmit": "Register",
       "validation": "Username and password are required.",
-      "loginFailed": "Local login failed. Verify credentials and try again."
+      "registerValidation": "Username, email and password are required.",
+      "loginFailed": "Local login failed. Verify credentials and try again.",
+      "registerFailed": "Local registration failed. Verify the details and try again.",
+      "saveSession": "Remember me on this device"
     }
   },
   "chatbot": {
@@ -81,8 +99,66 @@
       "matches": "Matches",
       "runs": "Analytics Runs",
       "jobs": "Jobs",
-      "candidates": "Candidates"
+      "candidates": "Candidates",
+      "employers": "Employers"
     }
+  },
+  "dashboard": {
+    "welcomeBack": "Welcome back",
+    "guestTitle": "Dashboard overview",
+    "guestSummary": "Dashboard content is loaded for all users, including local auth and guests.",
+    "statusLabel": "Overview",
+    "openJobs": "Open Jobs",
+    "recentCandidates": "Recent Candidates",
+    "dataLoaded": "Data loaded",
+    "dataUnavailable": "Unavailable"
+  },
+  "admin": {
+    "title": "Local User Administration",
+    "subtitle": "Manage local user accounts stored in the database",
+    "user": "user",
+    "username": "Username",
+    "email": "Email",
+    "status": "Status",
+    "roles": "Roles",
+    "lastLogin": "Last login",
+    "noData": "No users found",
+    "enabled": "Active",
+    "disabled": "Inactive",
+    "locked": "Locked",
+    "password": "Password",
+    "newPassword": "New password",
+    "passwordMinLengthHint": "Minimum 10 characters",
+    "resetPassword": "Reset password",
+    "passwordChanged": "Password changed successfully",
+    "passwordMinLength": "Password must be at least 10 characters",
+    "createValidation": "Username, email and password are required",
+    "rolesDescription": "Select roles for this user",
+    "managedEmployersDescription": "Employers managed by this manager",
+    "noManagedEmployers": "No employers assigned",
+    "employerIdPlaceholder": "Employer ID",
+    "assignEmployer": "Assign",
+    "createdAt": "Created at",
+    "modifiedAt": "Modified at",
+    "tabs": {
+      "profile": "Profile",
+      "roles": "Roles",
+      "password": "Password",
+      "employers": "Employers"
+    }
+  },
+  "employers": {
+    "nume": "Name",
+    "denumireLegala": "Legal name",
+    "status": "Status",
+    "codFiscal": "Fiscal code",
+    "website": "Website",
+    "adresa": "Address",
+    "emailContact": "Contact email",
+    "telefonContact": "Contact phone",
+    "noData": "No employers found",
+    "numeRequired": "Name is required",
+    "confirmDelete": "Delete this employer?"
   },
   "footer": {
     "companyTitle": "Company",
@@ -103,13 +179,11 @@
     },
     "contactTitle": "Contact",
     "contactValue": "support a smartrecruit.example",
-    "rights": "© {year} SmartRecruit. All rights reserved.",
-    "pages": {
-      "kicker": "Formal Product Notice",
-      "noticeTitle": "Important Notice"
-    }
+    "rights": "© {year} SmartRecruit. All rights reserved."
   },
   "footerPages": {
+    "kicker": "Formal Product Notice",
+    "noticeTitle": "Important Notice",
     "terms": {
       "title": "Terms of Service",
       "lead": "The present terms govern the use of this service in a concise and traditional manner.",

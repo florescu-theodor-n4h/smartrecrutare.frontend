@@ -40,6 +40,8 @@
         <input v-model="editing.locatie" />
         <label>{{ $t('jobs.description') }}</label>
         <textarea v-model="editing.descriere"></textarea>
+        <label>Employer ID</label>
+        <input v-model.number="editing.employerId" type="number" min="1" />
         <div class="modal-actions">
           <button @click="save" class="btn">{{ $t('actions.save') }}</button>
           <button @click="close" class="btn-ghost">{{ $t('actions.cancel') }}</button>
@@ -73,6 +75,7 @@ async function load() {
 
 function openCreate() {
   editing.value = new Job() as Partial<Job>
+  editing.value.activ = true
   modalOpen.value = true
 }
 
@@ -87,6 +90,10 @@ function close() {
 
 async function save() {
   try {
+    if (!editing.value.employerId) {
+      throw new Error('Employer id is required')
+    }
+
     if (editing.value.id) {
       await api.updateJob(editing.value.id, editing.value as Job)
     } else {

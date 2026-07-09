@@ -51,6 +51,30 @@ describe('ServerAuthUserPassLogin integration', () => {
     expect(getHttpAuthBearerToken()).toBe('test-token')
   })
 
+  it('posts register request to /auth/local/register', async () => {
+    const login = new ServerAuthUserPassLogin()
+    const postSpy = vi.spyOn(httpClient, 'post').mockResolvedValue({
+      data: {
+        tokenType: 'Bearer',
+        accessToken: 'test-register-token',
+        expiresAt: '2026-01-01T00:00:00Z',
+        user: createLocalUser(),
+      },
+    } as never)
+
+    await login.register({
+      username: 'local-user',
+      email: 'local@example.test',
+      password: 'secret',
+    })
+
+    expect(postSpy).toHaveBeenCalledWith('/auth/local/register', {
+      username: 'local-user',
+      email: 'local@example.test',
+      password: 'secret',
+    })
+  })
+
   it('checks identity on /auth/local/me', async () => {
     const login = new ServerAuthUserPassLogin()
     const getSpy = vi.spyOn(httpClient, 'get').mockResolvedValue({

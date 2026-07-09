@@ -1,21 +1,34 @@
 <template>
-  <button class="android" type="button" @click="openChat" :aria-label="label">
-    <span class="halo" aria-hidden="true"></span>
-    <span class="body" aria-hidden="true">
-      <span class="antenna antenna-left"></span>
-      <span class="antenna antenna-right"></span>
-      <span class="head">
-        <span class="eye"></span>
-        <span class="eye"></span>
+  <div
+    class="chatbot-hover-wrap"
+    @mouseenter="showPopover = true"
+    @mouseleave="showPopover = false"
+  >
+    <button class="android" type="button" @click="openChat" :aria-label="label">
+      <span class="halo" aria-hidden="true"></span>
+      <span class="body" aria-hidden="true">
+        <span class="antenna antenna-left"></span>
+        <span class="antenna antenna-right"></span>
+        <span class="head">
+          <span class="eye"></span>
+          <span class="eye"></span>
+        </span>
+        <span class="torso"></span>
+        <span class="wing wing-left"></span>
+        <span class="wing wing-right"></span>
       </span>
-      <span class="torso"></span>
-      <span class="wing wing-left"></span>
-      <span class="wing wing-right"></span>
-    </span>
-  </button>
+    </button>
+
+    <div v-if="showPopover" class="chatbot-popover" role="tooltip">
+      <strong>{{ label }}</strong>
+      <p>Open the chatbot without losing your place in the current view.</p>
+      <button type="button" class="chatbot-popover-action" @click="openChat">Open</button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 defineProps<{
@@ -23,6 +36,7 @@ defineProps<{
 }>()
 
 const router = useRouter()
+const showPopover = ref(false)
 
 function openChat(): void {
   router.push('/chatbot')
@@ -30,11 +44,14 @@ function openChat(): void {
 </script>
 
 <style scoped>
-.android {
+.chatbot-hover-wrap {
   position: fixed;
   right: 1.25rem;
   bottom: 2.25rem;
   z-index: 50;
+}
+
+.android {
   width: 92px;
   height: 92px;
   border: 0;
@@ -146,6 +163,35 @@ function openChat(): void {
 
 .wing-right {
   right: 12px;
+}
+
+.chatbot-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.75rem);
+  width: 240px;
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  background: rgba(9, 19, 36, 0.95);
+  color: #e9f7ff;
+  box-shadow: 0 18px 36px rgba(8, 15, 28, 0.28);
+  border: 1px solid rgba(142, 242, 255, 0.2);
+}
+
+.chatbot-popover p {
+  margin: 0.35rem 0 0.75rem;
+  line-height: 1.45;
+  color: rgba(233, 247, 255, 0.82);
+}
+
+.chatbot-popover-action {
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #8ef2ff, #3cb0ff);
+  color: #07243b;
+  font-weight: 700;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
 }
 
 @keyframes drift {

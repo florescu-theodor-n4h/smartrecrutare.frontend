@@ -97,6 +97,10 @@ Role typing must be explicit. Use typed union or enum for:
 - Preserve backward compatibility with VITE_PREFERRED_LOGIN if already present.
 - Keep VITE_DISABLE_LOCAL_LOGIN as a safety flag.
 - Use /auth/local/login and /auth/local/me for local auth flows.
+- **Views and components must NEVER import from `@auth0/auth0-vue` directly.**
+- **Auth state in views must always be read through the contract: `import { useAuthLoginPlugin } from '@/services/auth.contract'` or `inject(AuthLoginKey, null)` for safe optional usage.**
+- **For env-based auth mode checks in views, import `getAuthEnvironmentConfig` and `getPreferredAuthMode` from `@/services/auth` — never call Auth0 SDK hooks from view code.**
+- **UI labels must never expose provider implementation names (Auth0, Pinia, cookies, js-cookie). Use generic user-facing terms: "cont extern", "SSO", "servicii externe".**
 
 ## Testing And Validation Rules
 

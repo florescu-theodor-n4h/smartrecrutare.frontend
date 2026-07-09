@@ -79,6 +79,16 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
+    {
+      path: '/employers',
+      name: 'employers',
+      component: () => import('../views/EmployersView.vue'),
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/AdminLocalUsersView.vue'),
+    },
     //  404 Ultimul
     {
       path: '/:pathMatch(.*)*',

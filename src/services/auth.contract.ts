@@ -1,5 +1,6 @@
 import type { App, InjectionKey, Ref } from 'vue'
 import { inject } from 'vue'
+import { useAuthSessionStoreSafely } from '@/stores/auth.store'
 
 /**
  * Cheie de injectare pentru adaugarea Plugin-ului acestuia in
@@ -40,6 +41,17 @@ abstract class AuthLoginService {
   public abstract checkAuth(): Promise<void>
 
   /**
+   * Initiaza inregistrarea unui utilizator nou.
+   * Implementarile care nu suporta inregistrare pot pastra comportamentul implicit.
+   *
+   * @param options - Datele necesare pentru inregistrare, daca exista.
+   */
+  public async register(options?: unknown): Promise<void> {
+    void options
+    throw new Error('Register is not implemented for this auth provider')
+  }
+
+  /**
    * Realizeaza delogarea utilizatorului din aplicatie.
    *
    * Aceasta metoda termina sesiunea utilizatorului si il redirectioneaza
@@ -49,6 +61,68 @@ abstract class AuthLoginService {
    * @returns {Promise<void>} Promisiune care se rezolva cand delogarea este finalizata
    */
   public abstract logout(options?: unknown): Promise<void>
+
+  /**
+   * Returneaza o declaratie scurta pe care UI-ul o poate afisa utilizatorului.
+   */
+  public getDisclaimer(): string {
+    return ''
+  }
+
+  /**
+   * Indica daca implementarea locala poate persista intentia utilizatorului in Pinia.
+   */
+  public isLocalPiniaSaveable(): boolean {
+    return false
+  }
+
+  /**
+   * Marcheaza intentia utilizatorului pentru persistenta in configuratia locala.
+   */
+  public setSavingUserIntention(savingUserIntention: boolean): void {
+    const authSessionStore = useAuthSessionStoreSafely()
+    if (!authSessionStore) {
+      return
+    }
+
+    authSessionStore.setSavingUserIntention(savingUserIntention)
+  }
+
+  /**
+   * Salveaza starea de autentificare in sesiunea persistenta, daca Pinia este disponibil.
+   */
+  public saveLoginStatus(isAuthenticated: boolean): void {
+    const authSessionStore = useAuthSessionStoreSafely()
+    if (!authSessionStore) {
+      return
+    }
+
+    authSessionStore.setAuthenticated(isAuthenticated)
+  }
+
+  /**
+   * Salveaza textul de disclaimer in sesiunea persistenta, daca Pinia este disponibil.
+   */
+  public saveDisclaimer(disclaimer: string): void {
+    const authSessionStore = useAuthSessionStoreSafely()
+    if (!authSessionStore) {
+      return
+    }
+
+    authSessionStore.setDisclaimer(disclaimer)
+  }
+
+  /**
+   * Salveaza intentia utilizatorului in sesiunea persistenta, daca Pinia este disponibil.
+   */
+  public saveUserIntention(userIntention: 'login' | 'register' | null): void {
+    const authSessionStore = useAuthSessionStoreSafely()
+    if (!authSessionStore) {
+      return
+    }
+
+    authSessionStore.setUserIntention(userIntention)
+  }
 
   /**
    * Instaleaza serviciul de autentificare in aplicatie.

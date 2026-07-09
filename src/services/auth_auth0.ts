@@ -1,7 +1,8 @@
-import { ref, type Ref } from 'vue'
+import { ref, toRef, type Ref } from 'vue'
 import { AuthLoginService } from './auth.contract'
 import { authBanner, authError, authLog, authWarn } from './auth-debug'
 import type { Auth0VueClient } from '@auth0/auth0-vue'
+import { useAuthSessionStoreSafely } from '@/stores/auth.store'
 
 type LogoutOptions = {
   logoutParams?: {
@@ -73,33 +74,52 @@ function createAuthLoginPlugin(
   return new AuthSPAService(auth0)
 }
 
+abstract class AbstractAuthAuth0Service extends AuthLoginService {
+  protected readonly authSessionStore = useAuthSessionStoreSafely()
+
+  public readonly isAuthenticated: Ref<boolean>
+
+  protected constructor(protected readonly auth0Client?: Auth0VueClient) {
+    super()
+
+    if (this.authSessionStore) {
+      this.isAuthenticated = toRef(this.authSessionStore, 'isAuthenticated')
+      this.authSessionStore.hydrate()
+    } else if (auth0Client) {
+      this.isAuthenticated = auth0Client.isAuthenticated
+    } else {
+      this.isAuthenticated = ref(false)
+    }
+  }
+
+  protected persistAuthState(isAuthenticated: boolean): void {
+    this.saveLoginStatus(isAuthenticated)
+  }
+
+  public override getDisclaimer(): string {
+    return this.authSessionStore?.disclaimer ?? ''
+  }
+
+  public override isLocalPiniaSaveable(): boolean {
+    return true
+  }
+}
+
 /**
  * Implementare a serviciului de autentificare pentru Auth0 SPA (Single Page Application).
  *
  * Aceasta clasa integreaza SDK-ul Auth0 Vue pentru a gestiona autentificarea
  * utilizatorilor intr-o aplicatie single page folosind protocolul OAuth2/OIDC.
  */
-class AuthSPAService extends AuthLoginService {
-  /**
-   * Referinta reactiva la starea de autentificare de la Auth0 SDK.
-   */
-  public readonly isAuthenticated: Ref<boolean>
-
-  /**
-   * Clientul Auth0 Vue folosit pentru operatiile de autentificare.
-   */
-  private readonly auth0: Auth0VueClient
-
+class AuthSPAService extends AbstractAuthAuth0Service {
   /**
    * Construieste o instanta de AuthSPAService.
    *
    * @param {Auth0VueClient} auth0 - Clientul Auth0 Vue configurat
    */
   public constructor(auth0: Auth0VueClient) {
-    super()
-
-    this.auth0 = auth0
-    this.isAuthenticated = auth0.isAuthenticated
+    super(auth0)
+    this.persistAuthState(auth0.isAuthenticated.value)
     authBanner('AuthSPAService initialized', {
       initialIsAuthenticated: this.isAuthenticated.value,
     })
@@ -113,7 +133,7 @@ class AuthSPAService extends AuthLoginService {
    */
   public async loginWithRedirect(options?: unknown): Promise<void> {
     authBanner('AuthSPAService.loginWithRedirect called', { hasOptions: options !== undefined })
-    await this.auth0.loginWithRedirect(options as never)
+    await this.auth0Client?.loginWithRedirect(options as never)
   }
 
   /**
@@ -130,6 +150,7 @@ class AuthSPAService extends AuthLoginService {
     authLog('AuthSPAService.checkAuth noop executed (managed by Auth0 SDK)', {
       isAuthenticated: this.isAuthenticated.value,
     })
+    this.persistAuthState(this.isAuthenticated.value)
   }
 
   /**
@@ -140,7 +161,8 @@ class AuthSPAService extends AuthLoginService {
    */
   public override async logout(options?: unknown): Promise<void> {
     authBanner('AuthSPAService.logout called', { hasOptions: options !== undefined })
-    await this.auth0.logout(options as Parameters<Auth0VueClient['logout']>[0])
+    await this.auth0Client?.logout(options as Parameters<Auth0VueClient['logout']>[0])
+    this.persistAuthState(false)
   }
 }
 
@@ -158,12 +180,7 @@ type MeResponse = {
  * Aceasta clasa utilizeaza un API backend pentru a gestiona autentificarea
  * utilizatorilor prin intermediul JWT (JSON Web Tokens) si cookie-uri de sesiune.
  */
-class JARJWTLogin extends AuthLoginService {
-  /**
-   * Starea reactiva de autentificare, initializata ca false.
-   */
-  public readonly isAuthenticated: Ref<boolean> = ref(false)
-
+class JARJWTLogin extends AbstractAuthAuth0Service {
   /**
    * URL-ul de baza al API-ului backend.
    */
@@ -215,12 +232,14 @@ class JARJWTLogin extends AuthLoginService {
 
     if (response.status === 401) {
       this.isAuthenticated.value = false
+      this.persistAuthState(false)
       authWarn('JARJWTLogin.checkAuth received 401, marking unauthenticated')
       return
     }
 
     if (!response.ok) {
       this.isAuthenticated.value = false
+      this.persistAuthState(false)
       authError('JARJWTLogin.checkAuth failed with non-OK response', {
         status: response.status,
       })
@@ -230,6 +249,7 @@ class JARJWTLogin extends AuthLoginService {
     const data = (await response.json()) as MeResponse
 
     this.isAuthenticated.value = data.authenticated === true
+    this.persistAuthState(this.isAuthenticated.value)
     authBanner('JARJWTLogin.checkAuth completed', {
       authenticated: this.isAuthenticated.value,
     })
@@ -256,6 +276,7 @@ class JARJWTLogin extends AuthLoginService {
     })
 
     this.isAuthenticated.value = false
+    this.persistAuthState(false)
 
     const returnTo = extractLogoutReturnTo(options)
     if (returnTo) {
