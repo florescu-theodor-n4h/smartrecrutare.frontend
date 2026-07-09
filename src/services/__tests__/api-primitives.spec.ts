@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+﻿import { describe, expect, it } from 'vitest'
 import { LOCAL_USER_ROLES, isLocalUserRole, withVersionParam } from '../api-primitives'
 
 describe('api-primitives', () => {

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+﻿import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AuthSPAService, JARJWTLogin } from '../auth_auth0'
 import { ref } from 'vue'
 import { createAuthLoginPlugin } from '../auth_auth0'
