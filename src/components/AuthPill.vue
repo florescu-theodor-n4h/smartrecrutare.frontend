@@ -22,8 +22,12 @@
             <h3>{{ activeLocalActionTitle }}</h3>
             <p class="local-login-subtitle">{{ t('authPill.local.subtitle') }}</p>
             <div class="method-chips">
-              <span v-if="isSsoAvailable" class="method-chip">{{ t('authPill.enterprise.methodSso') }}</span>
-              <span v-if="isLocalLoginAvailable" class="method-chip">{{ t('authPill.enterprise.methodLocal') }}</span>
+              <span v-if="isSsoAvailable" class="method-chip">{{
+                t('authPill.enterprise.methodSso')
+              }}</span>
+              <span v-if="isLocalLoginAvailable" class="method-chip">{{
+                t('authPill.enterprise.methodLocal')
+              }}</span>
             </div>
           </div>
 
@@ -159,8 +163,16 @@
               autocomplete="new-password"
               @keydown.enter.prevent="submitLocalRegister"
             />
-            <button type="button" class="field-toggle" @click="showRegisterPassword = !showRegisterPassword">
-              {{ showRegisterPassword ? t('authPill.enterprise.hidePassword') : t('authPill.enterprise.showPassword') }}
+            <button
+              type="button"
+              class="field-toggle"
+              @click="showRegisterPassword = !showRegisterPassword"
+            >
+              {{
+                showRegisterPassword
+                  ? t('authPill.enterprise.hidePassword')
+                  : t('authPill.enterprise.showPassword')
+              }}
             </button>
           </div>
         </template>
@@ -189,8 +201,16 @@
               autocomplete="current-password"
               @keydown.enter.prevent="submitLocalLogin"
             />
-            <button type="button" class="field-toggle" @click="showLoginPassword = !showLoginPassword">
-              {{ showLoginPassword ? t('authPill.enterprise.hidePassword') : t('authPill.enterprise.showPassword') }}
+            <button
+              type="button"
+              class="field-toggle"
+              @click="showLoginPassword = !showLoginPassword"
+            >
+              {{
+                showLoginPassword
+                  ? t('authPill.enterprise.hidePassword')
+                  : t('authPill.enterprise.showPassword')
+              }}
             </button>
           </div>
         </template>

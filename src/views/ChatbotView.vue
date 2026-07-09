@@ -38,16 +38,55 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ConversationList from '@/components/chat/ConversationList.vue'
 import ChatWindow from '@/components/chat/ChatWindow.vue'
-import {
-  gptRobotApi,
-  type ConversationMessage,
-  type ConversationSummary,
-  type PagedMessagesResponse,
-} from '@/services/gptRobotApi'
+import { useChat } from '@/composables/useChat'
+
+const { t } = useI18n()
+
+const {
+  conversations,
+  messages,
+  loadingConversations,
+  creatingConversation,
+  loadingMessages,
+  sending,
+  conversationError,
+  messageError,
+  activeConversationId,
+  hasMoreMessages,
+  activeConversationTitle,
+  initialize,
+  createConversation,
+  openConversation,
+  loadMoreMessages,
+  sendMessage,
+} = useChat()
+
+onMounted(() => {
+  void initialize()
+})
+</script>
+
+<style scoped>
+.chatbot-page {
+  padding: 1rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
 
 const { t } = useI18n()
 const ACTIVE_CONVERSATION_KEY = 'chatbot.activeConversationId'

@@ -42,7 +42,9 @@ function createAuthServiceMock(): AuthServiceMock {
     isLocalPiniaSaveable: vi.fn().mockReturnValue(true),
     getDisclaimer: vi
       .fn()
-      .mockReturnValue('Local auth can persist your session in a browser cookie-backed Pinia store.'),
+      .mockReturnValue(
+        'Local auth can persist your session in a browser cookie-backed Pinia store.',
+      ),
   }
 }
 
