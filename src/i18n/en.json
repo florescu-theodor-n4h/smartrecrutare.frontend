@@ -19,7 +19,9 @@
   },
   "jobs": {
     "title": "Job Title",
+    "titlu": "Job Title",
     "location": "Location",
+    "locatie": "Location",
     "description": "Description",
     "noData": "No jobs found"
   },

@@ -19,9 +19,11 @@
   },
   "jobs": {
     "title": "Denumire Post",
-    "location": "Locație",
+    "titlu": "Denumire Post",
+    "location": "Locatie",
+    "locatie": "Locatie",
     "description": "Descriere",
-    "noData": "Nu s-au găsit posturi"
+    "noData": "Nu s-au gasit posturi"
   },
   "candidates": {
     "name": "Nume",
