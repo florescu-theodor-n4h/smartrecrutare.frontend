@@ -162,9 +162,7 @@ class AuthSPAService extends AbstractAuthAuth0Service {
     })
 
     const auth0IsLoading =
-      'isLoading' in auth0 && auth0.isLoading
-        ? (auth0.isLoading as Ref<boolean>)
-        : ref(false)
+      'isLoading' in auth0 && auth0.isLoading ? (auth0.isLoading as Ref<boolean>) : ref(false)
 
     /*
      * Sincronizeaza starea Auth0 in store doar dupa finalizarea bootstrap-ului SDK.
