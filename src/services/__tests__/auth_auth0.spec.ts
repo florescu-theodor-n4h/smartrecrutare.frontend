@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { JARJWTLogin } from '../auth_auth0'
+import { AuthSPAService, JARJWTLogin } from '../auth_auth0'
+import { ref } from 'vue'
 
 describe('JARJWTLogin technical behavior', () => {
   beforeEach(() => {
@@ -53,5 +54,43 @@ describe('JARJWTLogin technical behavior', () => {
     await login.logout()
 
     expect(login.isAuthenticated.value).toBe(false)
+  })
+
+  it('logout applies returnTo option when provided', async () => {
+    const login = new JARJWTLogin('http://example.test')
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(null, { status: 204 }))
+    const redirectSpy = vi
+      .spyOn(
+        login as unknown as { redirectAfterLogout: (returnTo: string) => void },
+        'redirectAfterLogout',
+      )
+      .mockImplementation(() => undefined)
+
+    await login.logout({ logoutParams: { returnTo: 'http://example.test/bye' } })
+
+    expect(fetchSpy).toHaveBeenCalledWith('http://example.test/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    })
+    expect(redirectSpy).toHaveBeenCalledWith('http://example.test/bye')
+    expect(login.isAuthenticated.value).toBe(false)
+  })
+})
+
+describe('AuthSPAService logout behavior', () => {
+  it('forwards logout options to Auth0 client', async () => {
+    const logoutMock = vi.fn<() => Promise<void>>().mockResolvedValue()
+    const service = new AuthSPAService({
+      isAuthenticated: ref(false),
+      loginWithRedirect: vi.fn<() => Promise<void>>().mockResolvedValue(),
+      logout: logoutMock,
+    } as never)
+
+    const options = { logoutParams: { returnTo: 'http://example.test/app' } }
+    await service.logout(options)
+
+    expect(logoutMock).toHaveBeenCalledWith(options)
   })
 })

@@ -1,24 +1,19 @@
 import { ref, type Ref } from 'vue'
 import { clearHttpAuthBearerToken, httpClient, setHttpAuthBearerToken } from './httpClient'
 import { AuthLoginService } from './auth.contract'
+import type { AuditFields, LocalUserRole, VersionFields } from './api-primitives'
 
-type LocalAuthRole = 'ADMIN' | 'MANAGER' | 'AUDITOR' | 'GOVERNMENTAL_USER' | 'USER'
-
-type LocalAuthUser = {
-  id: number
-  username: string
-  email: string
-  enabled: boolean
-  locked: boolean
-  roles: LocalAuthRole[]
-  managedEmployerIds: number[]
-  lastLoginAt: string | null
-  creatLa: string | null
-  creatDe: string | null
-  modificatLa: string | null
-  modificatDe: string | null
-  versiune: number
-}
+type LocalAuthUser = AuditFields &
+  VersionFields & {
+    id: number
+    username: string
+    email: string
+    enabled: boolean
+    locked: boolean
+    roles: LocalUserRole[]
+    managedEmployerIds: number[]
+    lastLoginAt: string | null
+  }
 
 type LocalLoginRequest = {
   username: string
@@ -121,7 +116,6 @@ function createLocalAuthLoginPlugin(): AuthLoginService {
 }
 
 export type {
-  LocalAuthRole,
   LocalAuthServiceConfig,
   LocalAuthUser,
   LocalLoginRequest,

@@ -102,12 +102,14 @@ const gptRobotApi = {
   listConversations(params: { page?: number; size?: number } = {}) {
     if (params.page === undefined && params.size === undefined) {
       return httpClient.get<
-        ConversationSummary[] | { conversations?: ConversationSummary[]; page?: Record<string, number> }
+        | ConversationSummary[]
+        | { conversations?: ConversationSummary[]; page?: Record<string, number> }
       >('/bot/gpt-robot/conversations')
     }
 
     return httpClient.get<
-      ConversationSummary[] | { conversations?: ConversationSummary[]; page?: Record<string, number> }
+      | ConversationSummary[]
+      | { conversations?: ConversationSummary[]; page?: Record<string, number> }
     >('/bot/gpt-robot/conversations', { params })
   },
 
@@ -165,11 +167,7 @@ const gptRobotApi = {
     )
   },
 
-  updateMessage(
-    conversationId: Uuid,
-    messageId: Uuid,
-    payload: Partial<UpdateMessageRequest>,
-  ) {
+  updateMessage(conversationId: Uuid, messageId: Uuid, payload: Partial<UpdateMessageRequest>) {
     return httpClient.put<ConversationMessage>(
       `/bot/gpt-robot/conversations/${conversationId}/messages/${messageId}`,
       payload,

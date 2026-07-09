@@ -24,8 +24,8 @@ function createAuth0ClientStub(): Auth0VueClient {
   // Auth0VueClient expune multe alte campuri, deci folosim un cast controlat.
   return {
     isAuthenticated: ref(false),
-    loginWithRedirect: vi.fn(),
-    logout: vi.fn(),
+    loginWithRedirect: vi.fn<() => Promise<void>>(),
+    logout: vi.fn<() => Promise<void>>(),
   } as unknown as Auth0VueClient
 }
 
@@ -57,8 +57,8 @@ describe('auth factory mode behavior', () => {
   })
 
   it('uses Auth0 factory in auth0 mode', async () => {
-    const auth0Factory = vi.fn(() => new FakeAuthService())
-    const localFactory = vi.fn(() => new FakeAuthService())
+    const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
@@ -77,8 +77,8 @@ describe('auth factory mode behavior', () => {
   })
 
   it('uses local factory in local mode', async () => {
-    const auth0Factory = vi.fn(() => new FakeAuthService())
-    const localFactory = vi.fn(() => new FakeAuthService())
+    const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,
@@ -96,8 +96,8 @@ describe('auth factory mode behavior', () => {
   })
 
   it('does not create Auth0 plugin in local mode', async () => {
-    const auth0Factory = vi.fn(() => new FakeAuthService())
-    const localFactory = vi.fn(() => new FakeAuthService())
+    const auth0Factory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
+    const localFactory = vi.fn<() => AuthLoginService>(() => new FakeAuthService())
 
     vi.doMock('../auth_auth0', () => ({
       createAuthLoginPlugin: auth0Factory,

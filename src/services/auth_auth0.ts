@@ -2,6 +2,23 @@ import { ref, type Ref } from 'vue'
 import { AuthLoginService } from './auth.contract'
 import type { Auth0VueClient } from '@auth0/auth0-vue'
 
+type LogoutOptions = {
+  logoutParams?: {
+    returnTo?: string
+  }
+}
+
+function extractLogoutReturnTo(options: unknown): string | null {
+  if (!options || typeof options !== 'object') {
+    return null
+  }
+
+  const maybeOptions = options as LogoutOptions
+  const maybeReturnTo = maybeOptions.logoutParams?.returnTo
+
+  return typeof maybeReturnTo === 'string' && maybeReturnTo.trim().length > 0 ? maybeReturnTo : null
+}
+
 /**
  * Implementare a serviciului de autentificare pentru Auth0 SPA (Single Page Application).
  *
@@ -60,8 +77,8 @@ class AuthSPAService extends AuthLoginService {
    * @param {unknown} options - Optiuni specifice Auth0 pentru procesul de delogare
    * @returns {Promise<void>} Promisiune care se rezolva cand delogarea este completa
    */
-  public async logout(options?: unknown): Promise<void> {
-    await this.auth0.logout(options as never)
+  public override async logout(options?: unknown): Promise<void> {
+    await this.auth0.logout(options as Parameters<Auth0VueClient['logout']>[0])
   }
 }
 
@@ -153,7 +170,7 @@ class JARJWTLogin extends AuthLoginService {
    *
    * @returns {Promise<void>} Promisiune care se rezolva cand delogarea este finalizata
    */
-  public async logout(): Promise<void> {
+  public override async logout(options?: unknown): Promise<void> {
     await fetch(`${this.apiBaseUrl}/logout`, {
       method: 'POST',
       credentials: 'include',
@@ -163,6 +180,15 @@ class JARJWTLogin extends AuthLoginService {
     })
 
     this.isAuthenticated.value = false
+
+    const returnTo = extractLogoutReturnTo(options)
+    if (returnTo) {
+      this.redirectAfterLogout(returnTo)
+    }
+  }
+
+  protected redirectAfterLogout(returnTo: string): void {
+    window.location.assign(returnTo)
   }
 }
 
