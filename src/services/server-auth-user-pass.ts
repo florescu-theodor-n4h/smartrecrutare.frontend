@@ -85,13 +85,15 @@ class ServerAuthUserPassLogin extends AuthLoginService {
       localLoginPath: this.config.localLoginPath,
       localMePath: this.config.localMePath,
     })
-    this.saveDisclaimer(
-      'Local auth can persist your session in a browser cookie-backed Pinia store.',
-    )
+    this.saveDisclaimer("By logging in you accept the site's terms and conditions.")
   }
 
   public override getDisclaimer(): string {
-    return 'Local auth can persist your session in a browser cookie-backed Pinia store.'
+    const authSessionStore = useAuthSessionStoreSafely()
+    if (!authSessionStore) {
+      return 'error'
+    }
+    return authSessionStore.disclaimer
   }
 
   public override isLocalPiniaSaveable(): boolean {

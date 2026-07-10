@@ -1,7 +1,7 @@
 <template>
   <main class="legal-page">
     <section class="document-shell">
-      <p class="kicker">{{ t('footer.pages.kicker') }}</p>
+      <p class="kicker">{{ t('footerPages.kicker') }}</p>
       <h1>{{ t(`footerPages.${pageKey}.title`) }}</h1>
       <p class="lead">{{ t(`footerPages.${pageKey}.lead`) }}</p>
 
@@ -11,7 +11,7 @@
       </article>
 
       <aside v-if="notice" class="notice-box">
-        <strong>{{ t('footer.pages.noticeTitle') }}</strong>
+        <strong>{{ t('footerPages.noticeTitle') }}</strong>
         <p>{{ notice }}</p>
       </aside>
     </section>

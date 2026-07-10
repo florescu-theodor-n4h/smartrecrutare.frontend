@@ -6,6 +6,7 @@ const themeStore = useThemeStore()
 import NavBar from '@/components/NavBar.vue'
 import ApiStatusBar from '@/components/ApiStatusBar.vue'
 import ChatbotAndroidWidget from '@/components/ChatbotAndroidWidget.vue'
+const isDev = import.meta.env.DEV
 
 const { locale } = useI18n()
 
@@ -14,7 +15,7 @@ function setLocale(nextLocale: string): void {
 }
 </script>
 
-<template id="wrapper">
+<template>
   <!--
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
@@ -30,7 +31,11 @@ function setLocale(nextLocale: string): void {
   </header>
 -->
 
-  <div id="main_spa_div" :class="{ dark: themeStore.dark }">
+  <div
+    style="min-height: 100vh; display: flex; flex-direction: column"
+    id="main_spa_div"
+    :class="{ dark: themeStore.dark }"
+  >
     <!-- TOP BAR -->
     <header class="topbar">
       <div class="left">{{ $t('appTitle') }}</div>
@@ -44,65 +49,69 @@ function setLocale(nextLocale: string): void {
 
     <div class="layout">
       <!-- CONTENT -->
-      <main class="content">
+      <main class="content" style="flex: 1">
         <NavBar></NavBar>
         <RouterView />
       </main>
     </div>
 
-    <footer class="legal-footer">
-      <section>
-        <h4>{{ $t('footer.companyTitle') }}</h4>
-        <p>{{ $t('footer.companyDescription') }}</p>
-      </section>
-      <section>
-        <h4>{{ $t('footer.legalTitle') }}</h4>
-        <ul>
-          <li>
-            <RouterLink to="/terms">{{ $t('footer.terms') }}</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/privacy">{{ $t('footer.privacy') }}</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/cookies">{{ $t('footer.cookies') }}</RouterLink>
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h4>{{ $t('footer.resourcesTitle') }}</h4>
-        <ul>
-          <li>
-            <RouterLink to="/statistics">{{ $t('footer.apiStatus') }}</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/support">{{ $t('footer.support') }}</RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/roadmap">{{ $t('footer.roadmap') }}</RouterLink>
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h4>{{ $t('footer.languageTitle') }}</h4>
-        <label class="language-toggle" :for="'footer-language-select'">
-          <span>{{ $t('footer.languageLabel') }}</span>
-          <select
-            id="footer-language-select"
-            :value="locale"
-            @change="setLocale(($event.target as HTMLSelectElement).value)"
-          >
-            <option value="en">{{ $t('footer.languages.en') }}</option>
-            <option value="ro">{{ $t('footer.languages.ro') }}</option>
-          </select>
-        </label>
-        <p>{{ $t('footer.contactValue') }}</p>
-        <small>{{ $t('footer.rights', { year: new Date().getFullYear() }) }}</small>
-      </section>
-    </footer>
+    <!-- se adauga div-ul ce contine cele doua footere -->
+    <div id="footers-cont">
+      <footer class="footer-primary legal-footer">
+        <section>
+          <h4>{{ $t('footer.companyTitle') }}</h4>
+          <p>{{ $t('footer.companyDescription') }}</p>
+        </section>
+        <section>
+          <h4>{{ $t('footer.legalTitle') }}</h4>
+          <ul>
+            <li>
+              <RouterLink to="/terms">{{ $t('footer.terms') }}</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/privacy">{{ $t('footer.privacy') }}</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/cookies">{{ $t('footer.cookies') }}</RouterLink>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h4>{{ $t('footer.resourcesTitle') }}</h4>
+          <ul>
+            <li>
+              <RouterLink to="/statistics">{{ $t('footer.apiStatus') }}</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/support">{{ $t('footer.support') }}</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/roadmap">{{ $t('footer.roadmap') }}</RouterLink>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h4>{{ $t('footer.languageTitle') }}</h4>
+          <label class="language-toggle" :for="'footer-language-select'">
+            <span>{{ $t('footer.languageLabel') }}</span>
+            <select
+              id="footer-language-select"
+              :value="locale"
+              @change="setLocale(($event.target as HTMLSelectElement).value)"
+            >
+              <option value="en">{{ $t('footer.languages.en') }}</option>
+              <option value="ro">{{ $t('footer.languages.ro') }}</option>
+            </select>
+          </label>
+          <p>{{ $t('footer.contactValue') }}</p>
+          <small>{{ $t('footer.rights', { year: new Date().getFullYear() }) }}</small>
+        </section>
+      </footer>
+
+      <ApiStatusBar class="footer-secondary" v-if="isDev" />
+    </div>
 
     <ChatbotAndroidWidget label="Open chatbot" />
-    <ApiStatusBar />
   </div>
 </template>
 
@@ -164,13 +173,60 @@ nav a:first-of-type {
   }
 }
 
-.legal-footer {
+#footers-cont {
+  /*position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;*/
+  position: static;
+  width: 100%;
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-primary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
-  border-top: 1px solid var(--color-border);
+}
+
+.footer-secondary {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 700px) {
+  .footer-primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .footer-primary {
+    grid-template-columns: 1fr;
+  }
+}
+
+.legal-footer {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
   margin-top: 1rem;
   padding-top: 1rem;
+
+  padding: 0.4rem 0.9rem;
+  /*display: grid;
+  gap: 0.45rem; /*
+  align-items: center;
+  justify-content: center;*/
+  /*border-top: 1px solid #cdd8ea;*/
+  /*background: rgba(8, 17, 36, 0.92);*/
+  /*color: #d8e7ff;*/
+  font-size: 0.82rem;
+  /*backdrop-filter: blur(6px);*/
 }
 
 .legal-footer h4 {

@@ -492,6 +492,9 @@ onMounted(() => {
 })
 </script>
 
+<!-- se adauga stilul comun de modal-->
+<style scoped src="@/assets/shared_popup_modal.css"></style>
+
 <style scoped>
 .admin-page {
   padding: 1rem;
@@ -665,60 +668,6 @@ onMounted(() => {
   gap: 0.75rem;
   margin-top: 1rem;
   font-size: 0.875rem;
-}
-
-/* Modala */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.modal-content {
-  background: var(--bg, #fff);
-  border-radius: 12px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-wide {
-  max-width: 600px;
-}
-
-.modal-content h3 {
-  margin: 0 0 0.5rem;
-}
-
-.modal-content label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  margin-top: 0.3rem;
-}
-
-.modal-content input,
-.modal-content select {
-  border: 1px solid var(--color-border, #d1d5db);
-  border-radius: 6px;
-  padding: 0.4rem 0.6rem;
-  font-size: 0.9rem;
-  background: var(--bg, #fff);
-  color: var(--color-text, #111);
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
 }
 
 /* Header modal editare */

@@ -42,9 +42,16 @@
   </div>
 
   <!-- Panou chat flotant — randat la nivel de body prin Teleport -->
-  <Teleport to="body">
+  <Teleport to="#floating_panels">
+    <!--<Teleport to="body"> -->
     <Transition name="panel">
-      <div v-if="panelOpen" class="widget-panel" role="dialog" :aria-label="t('chatbot.title')">
+      <div
+        v-if="panelOpen"
+        class="widget-panel global_secondary_popups"
+        role="dialog"
+        :aria-label="t('chatbot.title')"
+        :class="{ dark: themeStore.dark }"
+      >
         <!-- Header panou -->
         <div class="widget-header">
           <div class="widget-title">
@@ -124,6 +131,8 @@ import { useI18n } from 'vue-i18n'
 import ChatWindow from '@/components/chat/ChatWindow.vue'
 import { useChat } from '@/composables/useChat'
 import type { ConversationSummary } from '@/services/gptRobotApi'
+import { useThemeStore } from '@/stores/theme.store'
+const themeStore = useThemeStore()
 
 defineProps<{
   label: string
@@ -344,7 +353,8 @@ onMounted(() => {
     0 24px 60px rgba(5, 15, 30, 0.32),
     0 4px 16px rgba(5, 15, 30, 0.18);
   border: 1px solid rgba(142, 242, 255, 0.18);
-  background: #fff;
+  /*background: #fff;*/
+  background: var(--bg, #fff);
 }
 
 /* Header */
@@ -411,7 +421,7 @@ onMounted(() => {
   padding: 0.45rem 0.75rem;
   overflow-x: auto;
   scrollbar-width: none;
-  background: #f0f5ff;
+  background: var(--card-bg, #f8faff);
   flex-shrink: 0;
   border-bottom: 1px solid #dce5f5;
 }
@@ -428,18 +438,19 @@ onMounted(() => {
   font-size: 0.78rem;
   white-space: nowrap;
   cursor: pointer;
-  color: #2f4a7a;
+  color: color-mix(in srgb, #2f4a7a 75%, var(--bg));
   transition: background 0.15s;
   flex-shrink: 0;
 }
 
-.widget-conv-tab:hover {
-  background: #dce8ff;
-}
 .widget-conv-tab.active {
-  background: #0b5cff;
-  border-color: #0b5cff;
-  color: #fff;
+  background: color-mix(in srgb, #0b5cff 85%, var(--bg));
+  border-color: color-mix(in srgb, #0b5cff 85%, var(--bg));
+  color: color-mix(in srgb, #fff 92%, var(--bg));
+}
+
+.widget-conv-tab:hover {
+  background: color-mix(in srgb, #dce8ff 65%, var(--bg));
 }
 
 .widget-conv-empty {
@@ -470,7 +481,8 @@ onMounted(() => {
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid #e5ecf8;
   margin-bottom: 0;
-  background: #f8faff;
+  /*background: #f8faff;*/
+  background: var(--card-bg, #f8faff);
 }
 
 .widget-chat-wrap :deep(.messages) {
@@ -572,7 +584,8 @@ onMounted(() => {
   position: absolute;
   inset: 8px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(95, 229, 255, 0.2) 0%, rgba(95, 229, 255, 0) 70%);
+  /*background: radial-gradient(circle, rgba(95, 229, 255, 0.2) 0%, rgba(95, 229, 255, 0) 70%);*/
+  background: radial-gradient(circle, rgb(95 229 255 / 20%) 0%, var(--bg) 70%);
   filter: blur(0.5px);
 }
 
@@ -590,7 +603,7 @@ onMounted(() => {
   height: 24px;
   transform: translateX(-50%);
   border-radius: 16px;
-  background: linear-gradient(160deg, #8ef2ff, #3cb0ff);
+  background: linear-gradient(160deg, #8ef2ff, var(--card-bg));
   box-shadow:
     0 0 18px rgba(103, 230, 255, 0.6),
     inset 0 -2px 0 rgba(5, 39, 69, 0.45);
@@ -604,7 +617,7 @@ onMounted(() => {
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: #07243b;
+  background: color-mix(in srgb, #1677b8 35%, var(--card-bg));
   box-shadow: 0 0 10px rgba(6, 28, 46, 0.7);
 }
 
@@ -616,7 +629,12 @@ onMounted(() => {
   height: 27px;
   transform: translateX(-50%);
   border-radius: 10px;
-  background: linear-gradient(160deg, #49c8ff, #1e7ef0);
+
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, #49c8ff 75%, var(--card-bg)),
+    color-mix(in srgb, #1e7ef0 75%, var(--card-bg))
+  );
   box-shadow:
     0 6px 15px rgba(4, 43, 76, 0.45),
     inset 0 -2px 0 rgba(2, 25, 44, 0.35);
@@ -639,7 +657,7 @@ onMounted(() => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #8ef2ff;
+  background: color-mix(in srgb, #8cf4ff 75%, var(--bg));
   box-shadow: 0 0 10px rgba(142, 242, 255, 0.8);
 }
 
@@ -659,7 +677,7 @@ onMounted(() => {
   width: 16px;
   height: 12px;
   border-radius: 999px;
-  background: linear-gradient(160deg, #8ef2ff, #3cb0ff);
+  background: color-mix(in srgb, #8ef2ff 75%, var(--bg));
   opacity: 0.85;
   animation: flutter 0.8s ease-in-out infinite alternate;
 }
@@ -679,7 +697,7 @@ onMounted(() => {
   width: 240px;
   border-radius: 16px;
   padding: 0.9rem 1rem;
-  background: rgba(9, 19, 36, 0.95);
+  background: color-mix(in srgb, rgb(9 19 36 / 95%) 85%, var(--bg));
   color: #e9f7ff;
   box-shadow: 0 18px 36px rgba(8, 15, 28, 0.28);
   border: 1px solid rgba(142, 242, 255, 0.2);
@@ -694,7 +712,11 @@ onMounted(() => {
 .chatbot-popover-action {
   border: 0;
   border-radius: 999px;
-  background: linear-gradient(135deg, #8ef2ff, #3cb0ff);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, #8ef2ff 75%, var(--bg)),
+    color-mix(in srgb, #3cb0ff 75%, var(--bg))
+  );
   color: #07243b;
   font-weight: 700;
   padding: 0.45rem 0.8rem;

@@ -147,7 +147,8 @@ function formatTime(value: string): string {
   width: min(380px, 92vw);
   max-height: 420px;
   overflow: auto;
-  background: #fff;
+  /*background: #fff;*/
+  background: var(--bg, #fff);
   border: 1px solid #d7dfef;
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(20, 40, 80, 0.15);

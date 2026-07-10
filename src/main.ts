@@ -85,4 +85,8 @@ app.use(i18n)
 app.use(authLoginPlugin)
 authBanner('Auth login plugin installed into Vue app')
 
+const debugEnabled = import.meta.env.DEV && import.meta.env.VITE_DEBUG === 'true'
+
+app.config.performance = debugEnabled
+
 app.mount('#app')

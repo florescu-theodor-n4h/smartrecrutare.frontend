@@ -116,6 +116,8 @@ async function remove(item: Candidate) {
 onMounted(load)
 </script>
 
+<!-- se adauga stilul comun de modal-->
+<style scoped src="@/assets/shared_popup_modal.css"></style>
 <style scoped>
 .container {
   padding: 1rem;
@@ -147,25 +149,5 @@ onMounted(load)
 .table td {
   padding: 0.5rem;
   border-bottom: 1px solid #eee;
-}
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: white;
-  padding: 1rem;
-  border-radius: 6px;
-  width: 600px;
-}
-.modal-actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-  margin-top: 1rem;
 }
 </style>

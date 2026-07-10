@@ -101,7 +101,8 @@ onBeforeUnmount(() => {
   right: 0;
   top: calc(100% + 8px);
   min-width: 220px;
-  background: #fff;
+  /*background: #fff;*/
+  background: var(--bg, #fff);
   border: 1px solid var(--color-border, #d7dfef);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(20, 40, 80, 0.14);

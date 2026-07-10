@@ -189,7 +189,8 @@ function formatTime(value: string): string {
   overflow: auto;
   border: 1px solid #dbe2f0;
   border-radius: 8px;
-  background: #fff;
+  /*background: #fff;*/
+  background: var(--bg, #fff);
   padding: 0.75rem;
   display: grid;
   gap: 0.6rem;
@@ -198,15 +199,15 @@ function formatTime(value: string): string {
   border: 1px solid #e7ebf3;
   border-radius: 8px;
   padding: 0.6rem;
-  background: #fff;
+  background: var(--bg, #fff);
 }
 .message.user {
   border-color: #c8d7ff;
-  background: #f4f8ff;
+  background: var(--bg, #fff);
 }
 .message.assistant {
   border-color: #cde5d4;
-  background: #f3fbf5;
+  background: var(--bg, #fff);
 }
 .line {
   display: flex;
@@ -226,7 +227,7 @@ function formatTime(value: string): string {
 .input {
   min-height: 90px;
   width: 100%;
-  border: 1px solid #cfd8e8;
+  border: 1px solid color-mix(in srgb, #cfd8e8 60%, var(--card-bg));
   border-radius: 8px;
   padding: 0.6rem;
   resize: vertical;
@@ -245,7 +246,8 @@ function formatTime(value: string): string {
   cursor: pointer;
 }
 .btn {
-  background: #0b5cff;
+  /*background: #0b5cff;*/
+  background: var(--card-bg, #0b5cff);
   color: white;
 }
 .btn:disabled {
@@ -253,13 +255,18 @@ function formatTime(value: string): string {
   cursor: not-allowed;
 }
 .btn-secondary {
-  background: #e9edf7;
-  color: #22314f;
+  /*background: #e9edf7;*/
+  background: var(--card-bg, #e9edf7);
+  color: var(--text, #22314f);
 }
 .state {
-  color: #5f6f8f;
+  color: var(--text, #5f6f8f);
 }
 .error {
-  color: #b3261e;
+  color: var(--muted, #b3261e);
+}
+.composer .input {
+  background: var(--bg);
+  color: inherit;
 }
 </style>

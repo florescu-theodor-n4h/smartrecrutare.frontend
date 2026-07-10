@@ -1,4 +1,4 @@
-﻿import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick, ref, type Ref } from 'vue'
 import AuthPill from '../AuthPill.vue'
@@ -47,9 +47,7 @@ function createAuthServiceMock(): AuthServiceMock {
     isLocalPiniaSaveable: vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(true),
     getDisclaimer: vi
       .fn<() => string>()
-      .mockReturnValue(
-        'Local auth can persist your session in a browser cookie-backed Pinia store.',
-      ),
+      .mockReturnValue("By logging in you accept the site's terms and conditions."),
   }
 }
 

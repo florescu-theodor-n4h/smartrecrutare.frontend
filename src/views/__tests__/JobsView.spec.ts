@@ -5,7 +5,9 @@ import i18n from '../../i18n'
 
 vi.mock('../../services/api', () => ({
   default: {
-    getJobs: vi.fn<(...args: unknown[]) => unknown>(() => Promise.resolve({ data: [{ id: 1, titlu: 'Dev', locatie: 'Remote' }] })),
+    getJobs: vi.fn<(...args: unknown[]) => unknown>(() =>
+      Promise.resolve({ data: [{ id: 1, titlu: 'Dev', locatie: 'Remote' }] }),
+    ),
     createJob: vi.fn<(...args: unknown[]) => unknown>(() => Promise.resolve({})),
     updateJob: vi.fn<(...args: unknown[]) => unknown>(() => Promise.resolve({})),
     deleteJob: vi.fn<(...args: unknown[]) => unknown>(() => Promise.resolve({})),

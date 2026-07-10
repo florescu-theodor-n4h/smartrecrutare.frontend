@@ -14,21 +14,17 @@ const apiBaseUrl = computed(() => getActiveApiBaseUrl())
 
 <style scoped>
 .api-status {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
   padding: 0.4rem 0.9rem;
-  display: flex;
-  gap: 0.45rem;
+  /*display: flex;
+  gap: 0.45rem;*/
   align-items: center;
   justify-content: center;
-  border-top: 1px solid #cdd8ea;
+  border-top: 1px solid
+    color-mix(in srgb, #a7ac9d 55%, color-mix(in srgb, var(--card-bg) 60%, var(--bg)));
   background: rgba(8, 17, 36, 0.92);
   color: #d8e7ff;
   font-size: 0.82rem;
-  backdrop-filter: blur(6px);
+  /* backdrop-filter: blur(6px);*/
 }
 
 .label {
